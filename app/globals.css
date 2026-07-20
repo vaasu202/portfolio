@@ -114,6 +114,8 @@ footer { height: 75px; display: grid; grid-template-columns: 1fr auto 1fr; align
   --muted: #bec7bf;
   --line: rgba(226, 238, 227, .22);
   --line-hot: rgba(203, 255, 77, .72);
+  --pointer-x: 50vw;
+  --pointer-y: 28vh;
 }
 
 body { font-size: 16px; }
@@ -232,7 +234,146 @@ body { font-size: 16px; }
   .player-copy strong { font-size: 12px; }
 }
 
+/* Cinematic motion system */
+.game-shell { position: relative; isolation: isolate; overflow: clip; }
+.game-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(520px circle at var(--pointer-x) var(--pointer-y), rgba(98,230,255,.105), rgba(130,104,255,.035) 35%, transparent 72%);
+  mix-blend-mode: screen;
+}
+.ambient-grid { animation: grid-drift 22s linear infinite; }
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 15px;
+  color: var(--text);
+  background: radial-gradient(circle at center, rgba(130,104,255,.2), transparent 30%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.018) 3px 4px), #07090c;
+  pointer-events: none;
+  animation: boot-exit 2.45s cubic-bezier(.77,0,.18,1) both;
+}
+.boot-screen::before, .boot-screen::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--lime), transparent);
+  box-shadow: 0 0 20px rgba(98,230,255,.7);
+  animation: boot-scan 1.25s ease-in-out infinite;
+}
+.boot-screen::before { top: 18%; }
+.boot-screen::after { bottom: 18%; animation-direction: reverse; }
+.boot-emblem {
+  width: 106px;
+  height: 106px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(203,255,77,.65);
+  color: var(--lime);
+  font: 900 27px var(--mono);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 12px rgba(203,255,77,.025), 0 0 70px rgba(203,255,77,.14);
+  animation: emblem-arrive .75s cubic-bezier(.16,1,.3,1) both;
+}
+.boot-emblem span { transform: rotate(-45deg); text-shadow: 0 0 20px rgba(203,255,77,.55); }
+.boot-emblem i { position: absolute; inset: 12px; border: 1px solid rgba(130,104,255,.65); animation: emblem-spin 4s linear infinite; }
+.boot-emblem i:last-child { inset: 25px; border-color: rgba(98,230,255,.6); animation-direction: reverse; animation-duration: 2.8s; }
+.boot-screen > p { margin: 25px 0 0; font: 800 11px var(--mono); letter-spacing: .18em; }
+.boot-screen > small { color: var(--muted); font: 8px var(--mono); letter-spacing: .16em; }
+.boot-status { width: min(420px, 76vw); display: flex; justify-content: space-between; color: var(--muted); font: 8px var(--mono); letter-spacing: .1em; }
+.boot-status b { color: var(--lime); }
+.boot-progress { width: min(420px, 76vw); height: 4px; overflow: hidden; background: rgba(255,255,255,.1); }
+.boot-progress span { display: block; width: 100%; height: 100%; transform-origin: left; background: linear-gradient(90deg, var(--violet), var(--cyan), var(--lime)); box-shadow: 0 0 22px var(--cyan); animation: boot-load 1.45s .2s cubic-bezier(.76,0,.24,1) both; }
+
+.warp-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(203,255,77,.15), rgba(7,9,12,.88) 38%, rgba(7,9,12,.98));
+}
+.warp-transition.active { visibility: visible; animation: warp-flash .76s cubic-bezier(.77,0,.18,1) both; }
+.warp-transition::before, .warp-transition::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 8deg, rgba(98,230,255,.14) 8.4deg 8.8deg, transparent 9.2deg 18deg);
+  transform: scale(.25);
+}
+.warp-transition.active::before { animation: warp-tunnel .76s cubic-bezier(.2,.8,.2,1) both; }
+.warp-transition::after { transform: rotate(7deg) scale(.3); opacity: .42; }
+.warp-transition.active::after { animation: warp-tunnel-alt .76s cubic-bezier(.2,.8,.2,1) both; }
+.warp-line { position: absolute; left: 50%; top: 50%; width: 1px; height: 140vh; background: linear-gradient(transparent, var(--cyan), transparent); box-shadow: 0 0 18px var(--cyan); }
+.warp-line-a { transform: translate(-130px,-50%) rotate(34deg); }.warp-line-b { transform: translate(150px,-50%) rotate(-31deg); }
+.warp-core { position: relative; z-index: 2; padding: 9px 14px; border: 1px solid var(--lime); color: var(--lime); background: #090c10; font: 900 9px var(--mono); letter-spacing: .22em; box-shadow: 0 0 35px rgba(203,255,77,.2); }
+
+.motion-ready .reveal-target {
+  transition-property: opacity, transform, clip-path, border-color, box-shadow, background;
+  transition-duration: .75s, .75s, .85s, .2s, .2s, .2s;
+  transition-timing-function: ease, cubic-bezier(.16,1,.3,1), cubic-bezier(.16,1,.3,1), ease, ease, ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.motion-ready .reveal-target:not(.revealed) { opacity: 0; transform: translateY(34px) scale(.985); clip-path: inset(0 0 22% 0); }
+.motion-ready .loadout-card.revealed .ability-meter span { transform-origin: left; animation: ability-charge 1.15s .22s cubic-bezier(.16,1,.3,1) both; }
+.motion-ready .active-quest.revealed .reward-bar i { transform-origin: left; animation: reward-charge 1.35s .18s cubic-bezier(.16,1,.3,1) both; }
+
+.level-track span { position: relative; overflow: hidden; }
+.level-track span::after { content: ""; position: absolute; inset: 0; transform: translateX(-120%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); animation: xp-shimmer 2.6s ease-in-out infinite; }
+.world-nav button.active .map-node { display: inline-block; animation: nav-pulse 1.45s ease-in-out infinite; }
+.achievement-gem { animation: gem-float 3.6s ease-in-out infinite; }
+.achievement:nth-child(2) .achievement-gem { animation-delay: -.8s; }.achievement:nth-child(3) .achievement-gem { animation-delay: -1.7s; }.achievement:nth-child(4) .achievement-gem { animation-delay: -2.5s; }
+.zone-heading { position: relative; overflow: hidden; }
+.zone-heading::after { content: ""; position: absolute; left: -22%; bottom: -1px; width: 20%; height: 2px; background: linear-gradient(90deg, transparent, var(--lime), var(--cyan), transparent); box-shadow: 0 0 16px var(--cyan); animation: heading-scan 4.8s ease-in-out infinite; }
+.art-orbit { animation: orbit-spin 7s linear infinite; }
+.encounter-art::after { content: ""; position: absolute; width: 46px; height: 46px; border: 1px solid rgba(98,230,255,.35); transform: rotate(45deg); animation: encounter-diamond 4.5s ease-in-out infinite; }
+.encounter-art i:nth-of-type(1) { animation: particle-a 3.4s ease-in-out infinite; }.encounter-art i:nth-of-type(2) { animation: particle-b 4.2s ease-in-out infinite; }.encounter-art i:nth-of-type(3) { animation: particle-a 2.8s -1s ease-in-out infinite; }
+.radar-core { animation: core-breathe 3.2s ease-in-out infinite; }
+.academy-seal::after { animation: seal-spin 14s linear infinite; }
+.final-grid { animation: final-orbit 28s linear infinite; }
+.final-grid::before, .final-grid::after { content: ""; position: absolute; left: 50%; top: -5px; width: 9px; height: 9px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 20px var(--lime); }
+.final-grid::after { top: 50%; left: -5px; background: var(--cyan); box-shadow: 0 0 20px var(--cyan); }
+
+@keyframes grid-drift { to { background-position: 38px 38px; } }
+@keyframes boot-exit { 0%, 72% { opacity: 1; visibility: visible; } 88% { opacity: 1; transform: scale(1); } 99% { opacity: 0; transform: scale(1.045); } 100% { opacity: 0; visibility: hidden; transform: scale(1.045); } }
+@keyframes boot-scan { 0%, 100% { transform: scaleX(.2); opacity: .2; } 50% { transform: scaleX(.84); opacity: .9; } }
+@keyframes emblem-arrive { from { opacity: 0; transform: rotate(45deg) scale(.2); filter: blur(12px); } to { opacity: 1; transform: rotate(45deg) scale(1); filter: blur(0); } }
+@keyframes emblem-spin { to { transform: rotate(360deg); } }
+@keyframes boot-load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes warp-flash { 0% { opacity: 0; } 20%, 64% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes warp-tunnel { 0% { transform: scale(.12) rotate(0); opacity: 0; } 45% { opacity: 1; } 100% { transform: scale(2.1) rotate(17deg); opacity: 0; } }
+@keyframes warp-tunnel-alt { 0% { transform: scale(.18) rotate(7deg); opacity: 0; } 45% { opacity: .55; } 100% { transform: scale(2.5) rotate(-12deg); opacity: 0; } }
+@keyframes ability-charge { from { transform: scaleX(0); filter: brightness(2); } to { transform: scaleX(1); filter: brightness(1); } }
+@keyframes reward-charge { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes xp-shimmer { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+@keyframes nav-pulse { 50% { transform: scale(1.28); text-shadow: 0 0 15px var(--lime); } }
+@keyframes gem-float { 0%, 100% { transform: rotate(45deg) translate(0,0); } 50% { transform: rotate(45deg) translate(-4px,-4px); box-shadow: 0 0 24px currentColor; } }
+@keyframes heading-scan { 0%, 10% { transform: translateX(0); opacity: 0; } 30%, 70% { opacity: 1; } 90%, 100% { transform: translateX(610%); opacity: 0; } }
+@keyframes orbit-spin { from { transform: rotate(-12deg); } to { transform: rotate(348deg); } }
+@keyframes encounter-diamond { 0%, 100% { opacity: .18; transform: rotate(45deg) scale(.7); } 50% { opacity: .65; transform: rotate(225deg) scale(1.35); box-shadow: 0 0 28px rgba(98,230,255,.18); } }
+@keyframes particle-a { 50% { transform: translate(13px,-10px) scale(1.4); opacity: .55; } }
+@keyframes particle-b { 50% { transform: translate(-16px,12px) scale(.65); opacity: .4; } }
+@keyframes core-breathe { 50% { transform: scale(1.045); box-shadow: 0 0 52px rgba(130,104,255,.72), 0 0 110px rgba(130,104,255,.27); } }
+@keyframes seal-spin { to { transform: rotate(360deg); } }
+@keyframes final-orbit { to { transform: rotate(360deg); } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .boot-screen, .warp-transition { display: none !important; }
+  .motion-ready .reveal-target:not(.revealed) { opacity: 1; transform: none; clip-path: none; }
 }

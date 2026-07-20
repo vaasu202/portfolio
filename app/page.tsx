@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const zones = [
   { id: "command", key: "1", label: "Command" },
@@ -139,6 +139,21 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [visited, setVisited] = useState<string[]>(["command"]);
   const [scanMode, setScanMode] = useState(false);
+  const [warping, setWarping] = useState(false);
+
+  const jumpTo = useCallback((id: string) => {
+    const destination = document.getElementById(id);
+    if (!destination) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      destination.scrollIntoView({ behavior: "auto" });
+      return;
+    }
+
+    setWarping(true);
+    window.setTimeout(() => destination.scrollIntoView({ behavior: "smooth" }), 180);
+    window.setTimeout(() => setWarping(false), 760);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -167,24 +182,61 @@ export default function Home() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
       const zone = zones.find((item) => item.key === event.key);
-      if (zone) document.getElementById(zone.id)?.scrollIntoView({ behavior: "smooth" });
+      if (zone) jumpTo(zone.id);
       if (event.key === "Escape") setScanMode(false);
     };
+
+    const onPointerMove = (event: PointerEvent) => {
+      document.documentElement.style.setProperty("--pointer-x", `${event.clientX}px`);
+      document.documentElement.style.setProperty("--pointer-y", `${event.clientY}px`);
+    };
+
+    const revealTargets = Array.from(document.querySelectorAll<HTMLElement>(
+      ".zone-heading, .active-quest, .mission-card, .encounter-card, .loadout-card, .academy-card, .lore-card, .profile-card, .achievement",
+    ));
+    document.documentElement.classList.add("motion-ready");
+    revealTargets.forEach((target, index) => {
+      target.classList.add("reveal-target");
+      target.style.setProperty("--reveal-delay", `${(index % 3) * 85}ms`);
+    });
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("revealed");
+          revealObserver.unobserve(entry.target);
+        }
+      }),
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+    );
+    revealTargets.forEach((target) => revealObserver.observe(target));
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
     return () => {
       observer.disconnect();
+      revealObserver.disconnect();
+      document.documentElement.classList.remove("motion-ready");
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointermove", onPointerMove);
     };
-  }, []);
-
-  const jumpTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }, [jumpTo]);
 
   return (
     <main className={scanMode ? "game-shell scan-active" : "game-shell"}>
+      <div className="boot-screen" aria-hidden="true">
+        <div className="boot-emblem"><span>VS</span><i /><i /></div>
+        <p>VAASU_OS // PORTFOLIO CAMPAIGN</p>
+        <div className="boot-status"><span>LOADING PLAYER PROFILE</span><b>READY</b></div>
+        <div className="boot-progress"><span /></div>
+        <small>ML SYSTEMS · DATA ENGINEERING · GENAI</small>
+      </div>
+      <div className={`warp-transition ${warping ? "active" : ""}`} aria-hidden="true">
+        <span className="warp-line warp-line-a" /><span className="warp-line warp-line-b" /><span className="warp-core">WARPING</span>
+      </div>
       <div className="ambient-grid" aria-hidden="true" />
       <div className="noise" aria-hidden="true" />
 
