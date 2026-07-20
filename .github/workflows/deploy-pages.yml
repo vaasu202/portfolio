@@ -39,7 +39,7 @@ jobs:
             echo "NEXT_PUBLIC_BASE_PATH=/$REPO_NAME" >> "$GITHUB_ENV"
             echo "SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/$REPO_NAME" >> "$GITHUB_ENV"
           fi
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm exec next build
       - uses: actions/upload-pages-artifact@v3
         with:
