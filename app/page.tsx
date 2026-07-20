@@ -192,7 +192,7 @@ export default function Home() {
     };
 
     const revealTargets = Array.from(document.querySelectorAll<HTMLElement>(
-      ".zone-heading, .active-quest, .mission-card, .encounter-card, .loadout-card, .academy-card, .lore-card, .profile-card, .achievement",
+      ".manifesto-zone, .zone-heading, .active-quest, .mission-card, .encounter-card, .loadout-card, .academy-card, .lore-card, .profile-card, .achievement",
     ));
     document.documentElement.classList.add("motion-ready");
     revealTargets.forEach((target, index) => {
@@ -290,7 +290,7 @@ export default function Home() {
             <div className="command-copy">
               <p className="quest-label">MAIN QUEST // BUILD SYSTEMS THAT MATTER</p>
               <h1>Turning complex data into <em>production intelligence.</em></h1>
-              <p className="hero-copy">Data scientist and data engineer building production ML, modern data platforms, and GenAI systems—from first experiment to reliable deployment and executive decision.</p>
+              <p className="hero-copy">Data scientist and data engineer building production ML, modern data platforms, and GenAI systems from first experiment to reliable deployment and executive decision.</p>
               <div className="command-actions">
                 <button className="game-button primary" type="button" onClick={() => jumpTo("missions")}><span>START CAMPAIGN</span><b>ENTER ↵</b></button>
                 <a className="game-button secondary" href="resume.pdf" target="_blank"><span>OPEN INVENTORY</span><b>RESUME ↗</b></a>
@@ -319,6 +319,17 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="manifesto-zone" aria-labelledby="manifesto-title">
+          <div className="manifesto-topline"><span>PLAYER MANIFESTO // 001</span><b>BUILT FOR PRODUCTION</b></div>
+          <h2 className="manifesto-title" id="manifesto-title">
+            <span>Find the signal.</span>
+            <span>Build the <em>system.</em></span>
+            <span>Ship <strong>measurable impact.</strong></span>
+          </h2>
+          <div className="manifesto-bottom"><span>MODELS</span><i /><span>INFRASTRUCTURE</span><i /><span>DECISIONS</span><b>ALL SYSTEMS CONNECTED</b></div>
+          <div className="manifesto-wipes" aria-hidden="true"><i /><i /><i /></div>
         </section>
 
         <section className="zone missions-zone" id="missions">

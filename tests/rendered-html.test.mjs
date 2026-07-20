@@ -11,10 +11,13 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.match(html, /Portfolio world map/);
   assert.match(html, /CAREER CAMPAIGN/);
   assert.match(html, /SKILL ARMORY/);
+  assert.match(html, /PLAYER MANIFESTO/);
+  assert.match(html, /Ship <strong>measurable impact\.<\/strong>/i);
   assert.match(html, /Delta Dental Insurance/);
   assert.match(html, /Ernst &amp; Young/);
   assert.match(html, /Multi-Agent GenAI Retrieval Platform/);
   assert.match(html, /soheevaa@msu\.edu/);
+  assert.doesNotMatch(html, /—|&mdash;|&#8212;/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|Starter Project/);
 });
 
