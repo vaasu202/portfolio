@@ -166,7 +166,6 @@ export default function Home() {
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const commandZone = document.querySelector<HTMLElement>(".command-zone");
       const manifesto = document.querySelector<HTMLElement>(".manifesto-zone");
-      const encounterZone = document.querySelector<HTMLElement>(".encounters-zone");
 
       if (!reducedMotion && commandZone) {
         const rect = commandZone.getBoundingClientRect();
@@ -182,33 +181,6 @@ export default function Home() {
         manifesto.style.setProperty("--manifesto-shift-c", `${(0.5 - sceneProgress) * 64}px`);
       }
 
-      if (encounterZone) {
-        const track = encounterZone.querySelector<HTMLElement>(".encounter-grid");
-        const viewport = encounterZone.querySelector<HTMLElement>(".encounter-viewport");
-        const pinnedScroll = window.innerWidth > 1180 && window.innerHeight >= 680 && !reducedMotion && track && viewport;
-
-        if (pinnedScroll) {
-          const rect = encounterZone.getBoundingClientRect();
-          const travel = Math.max(1, encounterZone.offsetHeight - window.innerHeight);
-          const sectionProgress = clamp((86 - rect.top) / travel);
-          const maxShift = Math.max(0, track.scrollWidth - viewport.clientWidth);
-          const red = Math.round(203 + (130 - 203) * sectionProgress);
-          const green = Math.round(255 + (104 - 255) * sectionProgress);
-          const blue = Math.round(77 + (255 - 77) * sectionProgress);
-
-          track.style.setProperty("--encounter-shift", `${-maxShift * sectionProgress}px`);
-          encounterZone.style.setProperty("--encounter-progress", `${sectionProgress}`);
-          encounterZone.style.setProperty("--encounter-wash", `${16 + sectionProgress * 70}%`);
-          encounterZone.style.setProperty("--encounter-decor-shift", `${sectionProgress * -140}px`);
-          encounterZone.style.setProperty("--encounter-accent", `rgb(${red} ${green} ${blue})`);
-        } else {
-          track?.style.removeProperty("--encounter-shift");
-          encounterZone.style.removeProperty("--encounter-progress");
-          encounterZone.style.removeProperty("--encounter-wash");
-          encounterZone.style.removeProperty("--encounter-decor-shift");
-          encounterZone.style.removeProperty("--encounter-accent");
-        }
-      }
     };
 
     const onScroll = () => {
@@ -430,28 +402,23 @@ export default function Home() {
         </section>
 
         <section className="zone encounters-zone" id="projects">
-          <div className="encounter-stage">
-            <ZoneHeading number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work with real stakes." copy="Three challenges that combine statistical rigor, systems thinking, and business translation." />
-            <div className="encounter-scroll-meta" aria-hidden="true"><span>VERTICAL INPUT // HORIZONTAL WORLD</span><div><i /></div><b>SCROLL TO TRAVERSE</b></div>
-            <div className="encounter-viewport">
-              <div className="encounter-grid">
-                {projects.map((project, index) => {
-                  const body = (
-                    <>
-                      <div className="encounter-head"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
-                      <div className="encounter-art" aria-hidden="true"><span className="art-orbit" /><span className="art-core">0{index + 1}</span><i /><i /><i /></div>
-                      <p className="encounter-client">{project.client}</p>
-                      <h3>{project.title}</h3>
-                      <p className="encounter-description">{project.description}</p>
-                      <div className="encounter-reward"><div><small>REWARD UNLOCKED</small><strong>{project.reward}</strong><span>{project.rewardLabel}</span></div><b>{project.href ? "OPEN MISSION ↗" : "INTEL CLASSIFIED"}</b></div>
-                      <div className="encounter-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
-                      <div className="encounter-tools">{project.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
-                    </>
-                  );
-                  return project.href ? <a className={`encounter-card encounter-${index + 1}`} href={project.href} target="_blank" rel="noreferrer" key={project.title}>{body}</a> : <article className={`encounter-card encounter-${index + 1}`} key={project.title}>{body}</article>;
-                })}
-              </div>
-            </div>
+          <ZoneHeading number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work with real stakes." copy="Three challenges that combine statistical rigor, systems thinking, and business translation." />
+          <div className="encounter-grid">
+            {projects.map((project, index) => {
+              const body = (
+                <>
+                  <div className="encounter-head"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
+                  <div className="encounter-art" aria-hidden="true"><span className="art-orbit" /><span className="art-core">0{index + 1}</span><i /><i /><i /></div>
+                  <p className="encounter-client">{project.client}</p>
+                  <h3>{project.title}</h3>
+                  <p className="encounter-description">{project.description}</p>
+                  <div className="encounter-reward"><div><small>REWARD UNLOCKED</small><strong>{project.reward}</strong><span>{project.rewardLabel}</span></div><b>{project.href ? "OPEN MISSION ↗" : "INTEL CLASSIFIED"}</b></div>
+                  <div className="encounter-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
+                  <div className="encounter-tools">{project.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
+                </>
+              );
+              return project.href ? <a className={`encounter-card encounter-${index + 1}`} href={project.href} target="_blank" rel="noreferrer" key={project.title}>{body}</a> : <article className={`encounter-card encounter-${index + 1}`} key={project.title}>{body}</article>;
+            })}
           </div>
         </section>
 
