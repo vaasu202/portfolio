@@ -6,7 +6,11 @@ test("exports the complete portfolio as static HTML", async () => {
   const html = await readFile(new URL("../out/index.html", import.meta.url), "utf8");
 
   assert.match(html, /Vaasu Sohee/);
-  assert.match(html, /Systems built/);
+  assert.match(html, /Portfolio Campaign/);
+  assert.match(html, /START CAMPAIGN/);
+  assert.match(html, /Portfolio world map/);
+  assert.match(html, /CAREER CAMPAIGN/);
+  assert.match(html, /SKILL ARMORY/);
   assert.match(html, /Delta Dental Insurance/);
   assert.match(html, /Ernst &amp; Young/);
   assert.match(html, /Multi-Agent GenAI Retrieval Platform/);
