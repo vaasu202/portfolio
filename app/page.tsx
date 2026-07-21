@@ -16,6 +16,9 @@ const experiences = [
     status: "IN PROGRESS",
     role: "Data Scientist Intern (Co-op)",
     company: "Delta Dental Insurance",
+    logo: "logos/delta-dental.jpg",
+    logoAlt: "Delta Dental logo",
+    logoClass: "delta",
     period: "Jun 2025 - Present",
     summary: "Building governed GenAI analytics, document intelligence, and healthcare ML systems across the full production stack.",
     highlights: [
@@ -33,6 +36,9 @@ const experiences = [
     status: "COMPLETE",
     role: "Data Scientist",
     company: "Ernst & Young (EY)",
+    logo: "logos/ey.svg",
+    logoAlt: "EY logo",
+    logoClass: "ey",
     period: "Jan 2023 - Jun 2024",
     summary: "Advised Fortune 500 teams on cloud ML architecture, experimentation, data modernization, and production inference.",
     highlights: [
@@ -49,6 +55,9 @@ const experiences = [
     status: "COMPLETE",
     role: "Data Science Intern",
     company: "Ernst & Young (EY)",
+    logo: "logos/ey.svg",
+    logoAlt: "EY logo",
+    logoClass: "ey",
     period: "Jun 2022 - Aug 2022",
     summary: "Built cross-validated models and controlled experiments across 10+ client engagements.",
     highlights: ["Improved submission rates 20% and decision quality 25% for Operations and Marketing teams."],
@@ -60,6 +69,9 @@ const experiences = [
     status: "COMPLETE",
     role: "Software Engineering Intern",
     company: "Exodrone Systems",
+    logo: "logos/exodrone-systems.png",
+    logoAlt: "Exodrone Systems logo",
+    logoClass: "exodrone",
     period: "Dec 2021 - Jun 2022",
     summary: "Extended Mission Planner across frontend and backend systems using C#, .NET, and REST APIs.",
     highlights: ["Improved operator efficiency 35% and cut mission configuration load time 60%."],
@@ -71,6 +83,9 @@ const experiences = [
     status: "COMPLETE",
     role: "Data Science Intern",
     company: "NIIT Technologies",
+    logo: "logos/niit-technologies.svg",
+    logoAlt: "NIIT Technologies logo",
+    logoClass: "niit",
     period: "Jun 2021 - Dec 2021",
     summary: "Developed and deployed a production CNN with real-time inference and automated drift monitoring.",
     highlights: ["Achieved 95%+ accuracy with sub-100ms inference latency."],
@@ -389,7 +404,15 @@ export default function Home() {
                 <div className="mission-rail"><span>{String(experiences.length - index).padStart(2, "0")}</span><i /></div>
                 <div className="mission-body">
                   <div className="mission-meta"><span>{experience.code}</span><b>{experience.status}</b><time>{experience.period}</time></div>
-                  <div className="mission-title"><div><h3>{experience.role}</h3><p>{experience.company}</p></div><strong>{experience.reward}</strong></div>
+                  <div className="mission-title">
+                    <div className="mission-identity">
+                      <div className={`company-logo company-logo-${experience.logoClass}`}>
+                        <img src={experience.logo} alt={experience.logoAlt} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
+                      </div>
+                      <div className="mission-role"><h3>{experience.role}</h3><p>{experience.company}</p></div>
+                    </div>
+                    <strong>{experience.reward}</strong>
+                  </div>
                   <p className="mission-summary">{experience.summary}</p>
                   <div className="mission-detail-grid">
                     <ul>{experience.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul>

@@ -193,6 +193,35 @@ body { font-size: 16px; }
 .mission-card:hover { border-color: rgba(203,255,77,.48); background: linear-gradient(110deg, rgba(31,38,45,.98), rgba(17,22,27,.98)); transform: translateX(3px); }
 .mission-card.current { background: linear-gradient(110deg, rgba(38,47,40,.96), rgba(18,24,27,.98)); box-shadow: inset 3px 0 var(--lime), 0 18px 45px rgba(0,0,0,.2); }
 .mission-title h3 { color: #fffef9; }.mission-title p { color: #aa98ff; }.mission-title > strong { color: #dcff82; }
+.mission-title { align-items: center; margin: 18px 0 20px; }
+.mission-identity { display: flex; align-items: center; gap: 22px; min-width: 0; }
+.mission-role { min-width: 0; }
+.company-logo {
+  width: 190px;
+  height: 110px;
+  flex: 0 0 190px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 11px;
+  border: 1px solid rgba(130,104,255,.5);
+  border-radius: 0;
+  background: linear-gradient(145deg, rgba(34,40,48,.98), rgba(9,12,16,.98));
+  box-shadow: inset 0 0 28px rgba(130,104,255,.05), 0 14px 30px rgba(0,0,0,.24);
+  isolation: isolate;
+}
+.company-logo::before, .company-logo::after { content: ""; position: absolute; z-index: 2; width: 18px; height: 18px; pointer-events: none; }
+.company-logo::before { left: 5px; top: 5px; border-left: 2px solid rgba(130,104,255,.8); border-top: 2px solid rgba(130,104,255,.8); }
+.company-logo::after { right: 5px; bottom: 5px; border-right: 2px solid rgba(130,104,255,.8); border-bottom: 2px solid rgba(130,104,255,.8); }
+.company-logo img { display: block; position: absolute; inset: 11px; z-index: 1; width: calc(100% - 22px); height: calc(100% - 22px); object-fit: contain; }
+.company-logo-delta { padding: 0; background: #28ad38; }
+.company-logo-delta img { inset: 0; width: 100%; height: 100%; }
+.company-logo-exodrone img { inset: 7px; width: calc(100% - 14px); height: calc(100% - 14px); }
+.company-logo-niit { background: #f3f4ef; }
+.mission-card.current .company-logo { border-color: var(--lime); box-shadow: inset 0 0 34px rgba(203,255,77,.08), 0 0 0 1px rgba(203,255,77,.12), 0 0 32px rgba(203,255,77,.17), 0 18px 35px rgba(0,0,0,.28); }
+.mission-card.current .company-logo::before { border-color: var(--lime); }
+.mission-card.current .company-logo::after { border-color: var(--lime); }
 .mission-loadout b { font-size: 10px; color: #e1e7e1; background: rgba(255,255,255,.025); }
 
 .encounters-zone { background: radial-gradient(circle at 50% 18%, rgba(130,104,255,.13), transparent 36%), linear-gradient(to bottom, transparent, rgba(130,104,255,.045) 18%, transparent); }
@@ -475,6 +504,23 @@ body { font-size: 16px; }
 @keyframes core-breathe { 50% { transform: scale(1.045); box-shadow: 0 0 52px rgba(130,104,255,.72), 0 0 110px rgba(130,104,255,.27); } }
 @keyframes seal-spin { to { transform: rotate(360deg); } }
 @keyframes final-orbit { to { transform: rotate(360deg); } }
+
+@media (max-width: 820px) {
+  .company-logo { width: 154px; height: 94px; flex-basis: 154px; }
+  .mission-identity { gap: 17px; }
+}
+
+@media (max-width: 590px) {
+  .mission-title { display: block; }
+  .mission-title > strong { display: block; margin-top: 13px; }
+  .mission-identity { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; align-items: center; }
+  .company-logo { width: 104px; height: 74px; padding: 7px; }
+  .company-logo-delta { padding: 0; }
+  .company-logo img { inset: 7px; width: calc(100% - 14px); height: calc(100% - 14px); }
+  .company-logo-delta img { inset: 0; width: 100%; height: 100%; }
+  .company-logo::before, .company-logo::after { width: 12px; height: 12px; }
+  .mission-title h3 { font-size: clamp(20px, 6.7vw, 27px); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

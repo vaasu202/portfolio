@@ -16,6 +16,10 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.doesNotMatch(html, /VERTICAL INPUT|SCROLL TO TRAVERSE|encounter-viewport/);
   assert.match(html, /Delta Dental Insurance/);
   assert.match(html, /Ernst &amp; Young/);
+  assert.match(html, /logos\/delta-dental\.jpg/);
+  assert.match(html, /logos\/ey\.svg/);
+  assert.match(html, /logos\/exodrone-systems\.png/);
+  assert.match(html, /logos\/niit-technologies\.svg/);
   assert.match(html, /Multi-Agent GenAI Retrieval Platform/);
   assert.match(html, /soheevaa@msu\.edu/);
   assert.doesNotMatch(html, /—|&mdash;|&#8212;/);
@@ -27,5 +31,9 @@ test("includes the downloadable resume and social preview", async () => {
     access(new URL("../out/resume.pdf", import.meta.url)),
     access(new URL("../out/og.png", import.meta.url)),
     access(new URL("../out/favicon.svg", import.meta.url)),
+    access(new URL("../out/logos/delta-dental.jpg", import.meta.url)),
+    access(new URL("../out/logos/ey.svg", import.meta.url)),
+    access(new URL("../out/logos/exodrone-systems.png", import.meta.url)),
+    access(new URL("../out/logos/niit-technologies.svg", import.meta.url)),
   ]);
 });
