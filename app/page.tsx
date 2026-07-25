@@ -1,13 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 const zones = [
-  { id: "command", key: "1", label: "Command" },
-  { id: "missions", key: "2", label: "Campaign" },
-  { id: "projects", key: "3", label: "Encounters" },
-  { id: "armory", key: "4", label: "Loadout" },
-  { id: "academy", key: "5", label: "Academy" },
+  { id: "command", key: "1", label: "Start" },
+  { id: "missions", key: "2", label: "Career" },
+  { id: "projects", key: "3", label: "Work" },
+  { id: "armory", key: "4", label: "Skills" },
+  { id: "academy", key: "5", label: "About" },
 ];
 
 const experiences = [
@@ -143,363 +151,497 @@ const skillGroups = [
 ];
 
 const achievements = [
-  { code: "DATA_ARCHITECT", value: "131", label: "Datasets governed", tone: "lime" },
-  { code: "SPEED_RUNNER", value: "80%+", label: "Latency eliminated", tone: "violet" },
-  { code: "RISK_BREAKER", value: "$3.5M", label: "Annual risk reduced", tone: "gold" },
-  { code: "PERFECT_RUN", value: "4.0", label: "Graduate GPA", tone: "cyan" },
+  { code: "DATA_ARCHITECT", value: "131", label: "datasets governed" },
+  { code: "SPEED_RUNNER", value: "80%+", label: "latency eliminated" },
+  { code: "RISK_BREAKER", value: "$3.5M", label: "annual risk reduced" },
+  { code: "PERFECT_RUN", value: "4.0", label: "graduate GPA" },
 ];
 
 export default function Home() {
+  const root = useRef<HTMLElement>(null);
   const [activeZone, setActiveZone] = useState("command");
-  const [progress, setProgress] = useState(0);
-  const [visited, setVisited] = useState<string[]>(["command"]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scanMode, setScanMode] = useState(false);
-  const [warping, setWarping] = useState(false);
 
   const jumpTo = useCallback((id: string) => {
     const destination = document.getElementById(id);
     if (!destination) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      destination.scrollIntoView({ behavior: "auto" });
-      return;
-    }
-
-    setWarping(true);
-    window.setTimeout(() => destination.scrollIntoView({ behavior: "smooth" }), 180);
-    window.setTimeout(() => setWarping(false), 760);
+    destination.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+    setMenuOpen(false);
   }, []);
 
   useEffect(() => {
-    let scrollFrame = 0;
-    const clamp = (value: number) => Math.min(1, Math.max(0, value));
-
-    const syncScrollMotion = () => {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(total > 0 ? Math.min(100, Math.round((window.scrollY / total) * 100)) : 0);
-
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const commandZone = document.querySelector<HTMLElement>(".command-zone");
-      const manifesto = document.querySelector<HTMLElement>(".manifesto-zone");
-
-      if (!reducedMotion && commandZone) {
-        const rect = commandZone.getBoundingClientRect();
-        const sceneProgress = clamp((window.innerHeight - rect.top) / (window.innerHeight + rect.height));
-        commandZone.style.setProperty("--command-shift", `${(sceneProgress - 0.5) * 62}px`);
-      }
-
-      if (!reducedMotion && manifesto) {
-        const rect = manifesto.getBoundingClientRect();
-        const sceneProgress = clamp((window.innerHeight - rect.top) / (window.innerHeight + rect.height));
-        manifesto.style.setProperty("--manifesto-shift-a", `${(0.5 - sceneProgress) * 118}px`);
-        manifesto.style.setProperty("--manifesto-shift-b", `${(sceneProgress - 0.5) * 92}px`);
-        manifesto.style.setProperty("--manifesto-shift-c", `${(0.5 - sceneProgress) * 64}px`);
-      }
-
-    };
-
-    const onScroll = () => {
-      if (scrollFrame) return;
-      scrollFrame = window.requestAnimationFrame(() => {
-        scrollFrame = 0;
-        syncScrollMotion();
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) {
-          setActiveZone(visible.target.id);
-          setVisited((current) => current.includes(visible.target.id) ? current : [...current, visible.target.id]);
-        }
-      },
-      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.15, 0.4] },
-    );
-
-    zones.forEach((zone) => {
-      const node = document.getElementById(zone.id);
-      if (node) observer.observe(node);
-    });
-
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
       const zone = zones.find((item) => item.key === event.key);
       if (zone) jumpTo(zone.id);
-      if (event.key === "Escape") setScanMode(false);
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        setScanMode(false);
+      }
     };
-
-    const onPointerMove = (event: PointerEvent) => {
-      document.documentElement.style.setProperty("--pointer-x", `${event.clientX}px`);
-      document.documentElement.style.setProperty("--pointer-y", `${event.clientY}px`);
-    };
-
-    const revealTargets = Array.from(document.querySelectorAll<HTMLElement>(
-      ".manifesto-zone, .zone-heading, .active-quest, .mission-card, .encounter-card, .loadout-card, .academy-card, .lore-card, .profile-card, .achievement",
-    ));
-    document.documentElement.classList.add("motion-ready");
-    revealTargets.forEach((target, index) => {
-      target.classList.add("reveal-target");
-      target.style.setProperty("--reveal-delay", `${(index % 3) * 85}ms`);
-    });
-
-    const revealObserver = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed");
-          revealObserver.unobserve(entry.target);
-        }
-      }),
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
-    );
-    revealTargets.forEach((target) => revealObserver.observe(target));
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    return () => {
-      observer.disconnect();
-      revealObserver.disconnect();
-      document.documentElement.classList.remove("motion-ready");
-      if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("pointermove", onPointerMove);
-    };
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [jumpTo]);
 
-  return (
-    <main className={scanMode ? "game-shell scan-active" : "game-shell"}>
-      <div className="boot-screen" aria-hidden="true">
-        <div className="boot-emblem"><span>VS</span><i /><i /></div>
-        <p>VAASU_OS // PORTFOLIO CAMPAIGN</p>
-        <div className="boot-status"><span>LOADING PLAYER PROFILE</span><b>READY</b></div>
-        <div className="boot-progress"><span /></div>
-        <small>ML SYSTEMS · DATA ENGINEERING · GENAI</small>
-      </div>
-      <div className={`warp-transition ${warping ? "active" : ""}`} aria-hidden="true">
-        <span className="warp-line warp-line-a" /><span className="warp-line warp-line-b" /><span className="warp-core">WARPING</span>
-      </div>
-      <div className="ambient-grid" aria-hidden="true" />
-      <div className="noise" aria-hidden="true" />
+  useGSAP(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const progressFill = root.current?.querySelector<HTMLElement>(".page-progress-fill");
+    const progressLabel = root.current?.querySelector<HTMLElement>(".page-progress-label");
 
-      <header className="hud">
-        <a className="player-id" href="#command" aria-label="Return to command center">
-          <span className="player-avatar">VS</span>
-          <span className="player-copy"><small>PLAYER_01</small><strong>VAASU SOHEE</strong></span>
-        </a>
-        <div className="level-meter" aria-label={`Portfolio exploration ${progress}% complete`}>
-          <div className="level-label"><span>LVL 05 · DATA SYSTEMS</span><b>{progress}% XP</b></div>
-          <div className="level-track"><span style={{ width: `${Math.max(4, progress)}%` }} /></div>
+    if (reduceMotion) {
+      gsap.set(".boot-screen", { display: "none" });
+    } else {
+      gsap.timeline({ defaults: { ease: "power3.out" } })
+        .from(".boot-mark", { autoAlpha: 0, scale: 0.94, duration: 0.5 })
+        .from(".boot-copy > *", { autoAlpha: 0, y: 14, stagger: 0.08, duration: 0.42 }, "<0.05")
+        .to(".boot-progress span", { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, 0.25)
+        .to(".boot-screen", { yPercent: -100, duration: 0.72, ease: "power4.inOut" }, "+=0.1")
+        .set(".boot-screen", { display: "none" });
+    }
+
+    ScrollTrigger.create({
+      start: 0,
+      end: "max",
+      onUpdate: (self) => {
+        if (progressFill) gsap.set(progressFill, { scaleX: self.progress });
+        if (progressLabel) progressLabel.textContent = `${Math.round(self.progress * 100)}%`;
+      },
+    });
+
+    zones.forEach((zone) => {
+      ScrollTrigger.create({
+        trigger: `#${zone.id}`,
+        start: "top 52%",
+        end: "bottom 48%",
+        onToggle: (self) => {
+          if (self.isActive) setActiveZone(zone.id);
+        },
+      });
+    });
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        desktop: "(min-width: 900px)",
+        finePointer: "(hover: hover) and (pointer: fine)",
+        reduceMotion: "(prefers-reduced-motion: reduce)",
+      },
+      (context) => {
+        const { desktop, finePointer, reduceMotion: shouldReduce } = context.conditions as {
+          desktop: boolean;
+          finePointer: boolean;
+          reduceMotion: boolean;
+        };
+
+        if (shouldReduce) {
+          gsap.set(".gsap-reveal, .manifesto-line, .hero-message", { clearProps: "all" });
+          return;
+        }
+
+        const intro = gsap.timeline({
+          defaults: { duration: 0.78, ease: "power4.out" },
+        });
+        intro
+          .from(".race-nav", { autoAlpha: 0, y: -24 })
+          .from(".hero-kicker", { autoAlpha: 0, y: 20 }, "<0.12")
+          .from(".hero-name span", { autoAlpha: 0, yPercent: 115, stagger: 0.09 }, "<0.05")
+          .from(".player-core", { autoAlpha: 0, scale: 0.9, rotation: -4 }, "<0.12")
+          .from(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 16, stagger: 0.08 }, "<0.18");
+
+        if (desktop) {
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: ".hero-scene",
+              start: "top top",
+              end: "+=155%",
+              pin: ".hero-pin",
+              scrub: 0.8,
+              anticipatePin: 1,
+            },
+          })
+            .to(".hero-name .name-a", { xPercent: -34, autoAlpha: 0, ease: "power2.inOut" }, 0)
+            .to(".hero-name .name-b", { xPercent: 34, autoAlpha: 0, ease: "power2.inOut" }, 0)
+            .to(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 24, ease: "power2.inOut" }, 0)
+            .to(".player-core", { scale: 1.44, rotation: 7, ease: "power2.inOut" }, 0)
+            .to(".hero-light-layer", { autoAlpha: 0, ease: "power2.inOut" }, 0.2)
+            .fromTo(".hero-message", { autoAlpha: 0, scale: 0.98 }, { autoAlpha: 1, scale: 1, ease: "power2.inOut" }, 0.28)
+            .fromTo(".marquee-a", { xPercent: 12 }, { xPercent: -16, ease: "none" }, 0.28)
+            .fromTo(".marquee-b", { xPercent: -14 }, { xPercent: 15, ease: "none" }, 0.28)
+            .fromTo(".hero-signature", { autoAlpha: 0, scale: 0.82, rotation: -8 }, { autoAlpha: 1, scale: 1, rotation: -3, ease: "power3.out" }, 0.38);
+        }
+
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".manifesto-zone",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.75,
+          },
+        })
+          .fromTo(".manifesto-line:nth-child(1)", { xPercent: -18 }, { xPercent: 4, ease: "none" }, 0)
+          .fromTo(".manifesto-line:nth-child(2)", { xPercent: 15 }, { xPercent: -5, ease: "none" }, 0)
+          .fromTo(".manifesto-line:nth-child(3)", { xPercent: -10 }, { xPercent: 6, ease: "none" }, 0);
+
+        gsap.set(".gsap-reveal", { autoAlpha: 0, y: 56 });
+        ScrollTrigger.batch(".gsap-reveal", {
+          start: "top 88%",
+          once: true,
+          interval: 0.08,
+          batchMax: 4,
+          onEnter: (elements) => {
+            gsap.to(elements, {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.76,
+              stagger: 0.08,
+              ease: "power4.out",
+              overwrite: true,
+            });
+          },
+        });
+
+        gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
+          const visual = card.querySelector(".project-visual");
+          if (!visual) return;
+          gsap.fromTo(visual, { yPercent: -8 }, {
+            yPercent: 8,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.6,
+            },
+          });
+        });
+
+        gsap.to(".ticker-track", {
+          xPercent: -50,
+          duration: 22,
+          repeat: -1,
+          ease: "none",
+        });
+
+        if (finePointer) {
+          const xTo = gsap.quickTo(".player-core", "x", { duration: 0.55, ease: "power3.out" });
+          const yTo = gsap.quickTo(".player-core", "y", { duration: 0.55, ease: "power3.out" });
+          const onPointerMove = (event: PointerEvent) => {
+            xTo((event.clientX / window.innerWidth - 0.5) * 22);
+            yTo((event.clientY / window.innerHeight - 0.5) * 18);
+          };
+          window.addEventListener("pointermove", onPointerMove, { passive: true });
+          return () => window.removeEventListener("pointermove", onPointerMove);
+        }
+      },
+    );
+
+    let mounted = true;
+    document.fonts.ready.then(() => {
+      if (mounted) ScrollTrigger.refresh();
+    });
+
+    return () => {
+      mounted = false;
+      mm.revert();
+    };
+  }, { scope: root });
+
+  return (
+    <main ref={root} className={`portfolio-shell ${scanMode ? "scan-active" : ""}`}>
+      <div className="boot-screen" aria-hidden="true">
+        <div className="boot-mark">VS</div>
+        <div className="boot-copy">
+          <p>VAASU SOHEE</p>
+          <span>PORTFOLIO CAMPAIGN // 2026</span>
         </div>
-        <div className="hud-actions">
-          <button className="scan-button" type="button" aria-pressed={scanMode} onClick={() => setScanMode((value) => !value)}>
-            <span className="scan-icon" /> {scanMode ? "SCAN ACTIVE" : "SYSTEM SCAN"}
+        <div className="boot-progress"><span /></div>
+        <small>LOAD PLAYER</small>
+      </div>
+
+      <header className="race-nav">
+        <a className="brand-lockup" href="#command" aria-label="Return to start">
+          <strong>VAASU</strong><span>SOHEE</span>
+        </a>
+        <span className="nav-glyph" aria-hidden="true">VS</span>
+        <div className="nav-actions">
+          <a className="nav-chip nav-resume" href="resume.pdf" target="_blank">RESUME ↗</a>
+          <button className="nav-chip scan-trigger" type="button" aria-pressed={scanMode} onClick={() => setScanMode((value) => !value)}>
+            {scanMode ? "SCAN ON" : "SCAN"}
           </button>
-          <a className="hud-contact" href="mailto:soheevaa@msu.edu">CO-OP +</a>
+          <button className="menu-trigger" type="button" aria-label="Open or close navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>
+            <i /><i />
+          </button>
         </div>
       </header>
 
-      <nav className="world-nav" aria-label="Portfolio world map">
-        <span className="world-nav-title">WORLD MAP</span>
+      <nav className={`menu-panel ${menuOpen ? "open" : ""}`} aria-label="Primary navigation">
+        <div className="menu-panel-head"><span>WORLD MAP</span><b>KEYBOARD 1-5</b></div>
         {zones.map((zone, index) => (
-          <button
-            key={zone.id}
-            type="button"
-            className={`${activeZone === zone.id ? "active" : ""} ${visited.includes(zone.id) ? "visited" : ""}`}
-            onClick={() => jumpTo(zone.id)}
-            aria-current={activeZone === zone.id ? "location" : undefined}
-          >
-            <span className="map-node">{visited.includes(zone.id) ? "◆" : "◇"}</span>
-            <span><small>ZONE 0{index + 1}</small>{zone.label}</span>
-            <kbd>{zone.key}</kbd>
+          <button key={zone.id} type="button" onClick={() => jumpTo(zone.id)}>
+            <small>0{index + 1}</small><span>{zone.label}</span><b>{zone.key}</b>
           </button>
         ))}
-        <div className="world-nav-line"><span style={{ height: `${progress}%` }} /></div>
+        <div className="menu-links">
+          <a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer">LINKEDIN ↗</a>
+          <a href="https://github.com/vaasu202" target="_blank" rel="noreferrer">GITHUB ↗</a>
+          <a href="mailto:soheevaa@msu.edu">EMAIL ↗</a>
+        </div>
       </nav>
 
-      {scanMode && (
-        <aside className="scan-console" role="status">
-          <div className="console-head"><span>SYSTEM SCAN // COMPLETE</span><button type="button" onClick={() => setScanMode(false)} aria-label="Close system scan">ESC</button></div>
-          <p>High-value signals detected across the campaign.</p>
-          <ul><li>131 governed datasets</li><li>5M+ daily ETL records</li><li>3M+ healthcare claims</li><li>$3.5M modeled risk reduction</li></ul>
-        </aside>
-      )}
+      <nav className="progress-dock" aria-label="Portfolio world map">
+        <span className="page-progress-label">0%</span>
+        <div className="page-progress-track"><i className="page-progress-fill" /></div>
+        <div className="dock-zones">
+          {zones.map((zone, index) => (
+            <button
+              key={zone.id}
+              type="button"
+              className={activeZone === zone.id ? "active" : ""}
+              onClick={() => jumpTo(zone.id)}
+              aria-current={activeZone === zone.id ? "location" : undefined}
+              aria-label={`Go to ${zone.label}`}
+            >
+              <span>0{index + 1}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
 
-      <div className="game-content">
-        <section className="zone command-zone" id="command">
-          <div className="mission-breadcrumb"><span className="live-dot" /> CAMPAIGN ONLINE <b>/</b> MICHIGAN, USA <b>/</b> OPEN TO DATA & AI ROLES</div>
-          <div className="command-layout">
-            <div className="command-copy">
-              <p className="quest-label">MAIN QUEST // BUILD SYSTEMS THAT MATTER</p>
-              <h1>Turning complex data into <em>production intelligence.</em></h1>
-              <p className="hero-copy">Data scientist and data engineer building production ML, modern data platforms, and GenAI systems from first experiment to reliable deployment and executive decision.</p>
-              <div className="command-actions">
-                <button className="game-button primary" type="button" onClick={() => jumpTo("missions")}><span>START CAMPAIGN</span><b>ENTER ↵</b></button>
-                <a className="game-button secondary" href="resume.pdf" target="_blank"><span>OPEN INVENTORY</span><b>RESUME ↗</b></a>
-              </div>
-              <div className="party-links"><span>PARTY CHANNELS</span><a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer">LINKEDIN ↗</a><a href="https://github.com/vaasu202" target="_blank" rel="noreferrer">GITHUB ↗</a></div>
+      <aside className={`scan-panel ${scanMode ? "open" : ""}`} role="status">
+        <div><span>SYSTEM SCAN</span><b>4 SIGNALS FOUND</b></div>
+        <ul>
+          <li><strong>131</strong><span>governed datasets</span></li>
+          <li><strong>5M+</strong><span>daily ETL records</span></li>
+          <li><strong>3M+</strong><span>healthcare claims</span></li>
+          <li><strong>$3.5M</strong><span>risk reduction</span></li>
+        </ul>
+      </aside>
+
+      <section className="hero-scene" id="command">
+        <div className="hero-pin">
+          <ContourMap />
+          <div className="hero-light-layer">
+            <p className="hero-kicker">DATA SCIENTIST · ML SYSTEMS · GENAI</p>
+            <h1 className="hero-name">
+              <span className="name-a">VAASU</span>
+              <span className="name-b">SOHEE</span>
+            </h1>
+
+            <div className="player-core" aria-label="Vaasu Sohee data systems player core">
+              <span className="core-orbit orbit-a" /><span className="core-orbit orbit-b" />
+              <div className="core-slice slice-top"><span>GENAI</span><b>LANGGRAPH · RAG · VLM</b></div>
+              <div className="core-slice slice-mid"><span>VS</span><b>DATA / AI</b></div>
+              <div className="core-slice slice-bottom"><span>ML</span><b>PRODUCTION SYSTEMS</b></div>
+              <i className="core-crosshair cross-a" /><i className="core-crosshair cross-b" />
             </div>
 
-            <div className="command-console">
-              <div className="panel-head"><span>PLAYER BUILD // V5.0</span><b>ONLINE</b></div>
-              <div className="radar-map" aria-hidden="true">
-                <div className="radar-ring ring-a" /><div className="radar-ring ring-b" /><div className="radar-ring ring-c" />
-                <div className="radar-axis axis-a" /><div className="radar-axis axis-b" />
-                <div className="radar-core"><span>VS</span><small>DATA / AI</small></div>
-                <span className="radar-point p1">ML</span><span className="radar-point p2">DE</span><span className="radar-point p3">AI</span><span className="radar-point p4">DS</span>
-              </div>
-              <div className="attribute-grid">
-                <div><span>ML SYSTEMS</span><strong>94</strong></div><div><span>DATA ENG.</span><strong>92</strong></div><div><span>GENAI</span><strong>91</strong></div><div><span>STRATEGY</span><strong>89</strong></div>
-              </div>
+            <div className="hero-meta">
+              <span>PLAYER 01</span>
+              <p>Turning complex data into production intelligence.</p>
+              <b>MICHIGAN, USA</b>
             </div>
+            <div className="hero-actions">
+              <button type="button" onClick={() => jumpTo("missions")}>START CAMPAIGN <b>↘</b></button>
+              <a href="mailto:soheevaa@msu.edu">OPEN TO DATA & AI ROLES <b>+</b></a>
+            </div>
+            <div className="hero-scroll"><span>SCROLL TO LOAD</span><i /></div>
           </div>
 
-          <div className="achievement-ribbon">
-            {achievements.map((item) => (
-              <article className={`achievement ${item.tone}`} key={item.code}>
-                <span className="achievement-gem">◆</span><div><small>ACHIEVEMENT // {item.code}</small><strong>{item.value}</strong><p>{item.label}</p></div>
-              </article>
-            ))}
+          <div className="hero-message" aria-hidden="true">
+            <span className="message-label">PLAYER MANIFESTO // 001</span>
+            <div className="hero-marquee marquee-a">BUILD SYSTEMS THAT MATTER · BUILD SYSTEMS THAT MATTER ·</div>
+            <div className="hero-marquee marquee-b">SHIP MEASURABLE IMPACT · SHIP MEASURABLE IMPACT ·</div>
+            <div className="hero-signature">VS</div>
+            <p>MODELS · INFRASTRUCTURE · DECISIONS</p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="manifesto-zone" aria-labelledby="manifesto-title">
-          <div className="manifesto-topline"><span>PLAYER MANIFESTO // 001</span><b>BUILT FOR PRODUCTION</b></div>
-          <h2 className="manifesto-title" id="manifesto-title">
-            <span>Find the signal.</span>
-            <span>Build the <em>system.</em></span>
-            <span>Ship <strong>measurable impact.</strong></span>
-          </h2>
-          <div className="manifesto-bottom"><span>MODELS</span><i /><span>INFRASTRUCTURE</span><i /><span>DECISIONS</span><b>ALL SYSTEMS CONNECTED</b></div>
-          <div className="manifesto-wipes" aria-hidden="true"><i /><i /><i /></div>
-        </section>
+      <section className="metric-ticker" aria-label="Career highlights">
+        <div className="ticker-track">
+          {[...achievements, ...achievements].map((item, index) => (
+            <div className="ticker-item" key={`${item.code}-${index}`}>
+              <small>{item.code}</small><strong>{item.value}</strong><span>{item.label}</span><i>◆</i>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <section className="zone missions-zone" id="missions">
-          <ZoneHeading number="02" eyebrow="CAREER CAMPAIGN" title="Five missions. One evolving build." copy="Explore the systems, decisions, and measurable outcomes unlocked across healthcare, consulting, aerospace, and enterprise data." />
-          <div className="active-quest">
-            <div className="active-quest-main">
-              <div className="quest-state"><span className="live-dot" /> ACTIVE MISSION <b>DELTA DENTAL INSURANCE</b></div>
-              <h3>Build reliable AI for healthcare decisions.</h3>
-              <p>Architecting governed analytics and ML systems where accuracy, latency, traceability, and operational resilience all matter.</p>
-            </div>
-            <div className="quest-objectives">
-              <span>PRIMARY OBJECTIVES</span>
-              <p><i>✓</i> Govern natural-language analytics across 131 datasets</p>
-              <p><i>✓</i> Extract non-standard invoice data with VLMs</p>
-              <p><i>✓</i> Improve representation learning across 3M+ claims</p>
-              <p><i>↻</i> Scale reliable healthcare intelligence</p>
-            </div>
-            <div className="quest-reward"><small>BEST RUN</small><strong>80%+</strong><span>latency reduction</span><div className="reward-bar"><i /></div></div>
+      <section className="manifesto-zone" aria-labelledby="manifesto-title">
+        <ContourMap />
+        <div className="manifesto-top"><span>PLAYER MANIFESTO // 001</span><b>BUILT FOR PRODUCTION</b></div>
+        <h2 id="manifesto-title">
+          <span className="manifesto-line">Find the <em>signal.</em></span>
+          <span className="manifesto-line">Build the <b>system.</b></span>
+          <span className="manifesto-line">Ship <strong>measurable impact.</strong></span>
+        </h2>
+        <p>From statistical rigor to reliable infrastructure, every layer exists to help a real decision happen faster and with more confidence.</p>
+      </section>
+
+      <section className="content-zone missions-zone" id="missions">
+        <ZoneIntro number="02" eyebrow="CAREER CAMPAIGN" title="Five missions. One evolving build." copy="Healthcare, consulting, aerospace, and enterprise data. Each role added a new system layer." />
+
+        <article className="featured-mission gsap-reveal">
+          <div>
+            <span className="status-light" /> ACTIVE MISSION
+            <h3>Reliable AI for healthcare decisions.</h3>
           </div>
+          <p>Governed analytics and ML systems where accuracy, latency, traceability, and operational resilience all matter.</p>
+          <strong>80%+<small>LATENCY REDUCTION</small></strong>
+        </article>
 
-          <div className="mission-list">
-            {experiences.map((experience, index) => (
-              <article className={`mission-card ${index === 0 ? "current" : ""}`} key={`${experience.company}-${experience.role}`}>
-                <div className="mission-rail"><span>{String(experiences.length - index).padStart(2, "0")}</span><i /></div>
-                <div className="mission-body">
-                  <div className="mission-meta"><span>{experience.code}</span><b>{experience.status}</b><time>{experience.period}</time></div>
-                  <div className="mission-title">
-                    <div className="mission-identity">
-                      <div className={`company-logo company-logo-${experience.logoClass}`}>
-                        <img src={experience.logo} alt={experience.logoAlt} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
-                      </div>
-                      <div className="mission-role"><h3>{experience.role}</h3><p>{experience.company}</p></div>
-                    </div>
-                    <strong>{experience.reward}</strong>
-                  </div>
-                  <p className="mission-summary">{experience.summary}</p>
-                  <div className="mission-detail-grid">
-                    <ul>{experience.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul>
-                    <div className="mission-loadout"><span>LOADOUT</span>{experience.tags.map((tag) => <b key={tag}>{tag}</b>)}</div>
+        <div className="mission-stack">
+          {experiences.map((experience, index) => (
+            <article className={`mission-card gsap-reveal ${index === 0 ? "current" : ""}`} key={`${experience.company}-${experience.role}`}>
+              <div className="mission-index"><span>0{experiences.length - index}</span><small>{experience.code}</small></div>
+              <div className={`company-logo company-logo-${experience.logoClass}`}>
+                <Image
+                  src={experience.logo}
+                  alt={experience.logoAlt}
+                  width={220}
+                  height={80}
+                  priority={index === 0}
+                />
+              </div>
+              <div className="mission-main">
+                <div className="mission-meta"><b>{experience.status}</b><time>{experience.period}</time></div>
+                <h3>{experience.role}</h3>
+                <p className="company-name">{experience.company}</p>
+                <p className="mission-summary">{experience.summary}</p>
+                <ul>{experience.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul>
+              </div>
+              <div className="mission-reward">
+                <strong>{experience.reward}</strong>
+                <div>{experience.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="content-zone projects-zone" id="projects">
+        <ZoneIntro number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work. Real stakes." copy="Three challenges where modeling quality, systems thinking, and business translation had to work together." />
+        <div className="project-stack">
+          {projects.map((project, index) => {
+            const content = (
+              <>
+                <div className="project-visual" aria-hidden="true">
+                  <span>0{index + 1}</span>
+                  <i /><i /><i />
+                  <b>{project.reward}</b>
+                </div>
+                <div className="project-copy">
+                  <div className="project-meta"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
+                  <p>{project.client}</p>
+                  <h3>{project.title}</h3>
+                  <p className="project-description">{project.description}</p>
+                  <div className="project-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
+                  <div className="project-footer">
+                    <div>{project.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
+                    <b>{project.href ? "OPEN MISSION ↗" : "INTEL CLASSIFIED"}</b>
                   </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        </section>
+              </>
+            );
+            return project.href ? (
+              <a className={`project-card project-${index + 1} gsap-reveal`} href={project.href} target="_blank" rel="noreferrer" key={project.title}>{content}</a>
+            ) : (
+              <article className={`project-card project-${index + 1} gsap-reveal`} key={project.title}>{content}</article>
+            );
+          })}
+        </div>
+      </section>
 
-        <section className="zone encounters-zone" id="projects">
-          <ZoneHeading number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work with real stakes." copy="Three challenges that combine statistical rigor, systems thinking, and business translation." />
-          <div className="encounter-grid">
-            {projects.map((project, index) => {
-              const body = (
-                <>
-                  <div className="encounter-head"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
-                  <div className="encounter-art" aria-hidden="true"><span className="art-orbit" /><span className="art-core">0{index + 1}</span><i /><i /><i /></div>
-                  <p className="encounter-client">{project.client}</p>
-                  <h3>{project.title}</h3>
-                  <p className="encounter-description">{project.description}</p>
-                  <div className="encounter-reward"><div><small>REWARD UNLOCKED</small><strong>{project.reward}</strong><span>{project.rewardLabel}</span></div><b>{project.href ? "OPEN MISSION ↗" : "INTEL CLASSIFIED"}</b></div>
-                  <div className="encounter-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
-                  <div className="encounter-tools">{project.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
-                </>
-              );
-              return project.href ? <a className={`encounter-card encounter-${index + 1}`} href={project.href} target="_blank" rel="noreferrer" key={project.title}>{body}</a> : <article className={`encounter-card encounter-${index + 1}`} key={project.title}>{body}</article>;
-            })}
-          </div>
-        </section>
+      <section className="mode-bridge" aria-label="Portfolio pathways">
+        <ContourMap />
+        <button type="button" onClick={() => jumpTo("armory")}><small>TECHNICAL MODE</small><strong>BUILD</strong><span>Systems, platforms, and tools ↘</span></button>
+        <button type="button" onClick={() => jumpTo("academy")}><small>HUMAN MODE</small><strong>THINK</strong><span>Research, decisions, and context ↘</span></button>
+        <div className="mode-core">VS</div>
+      </section>
 
-        <section className="zone armory-zone" id="armory">
-          <ZoneHeading number="04" eyebrow="SKILL ARMORY" title="Choose the right loadout." copy="A full-stack toolkit for taking data products from raw signals to governed, observable production systems." />
-          <div className="loadout-grid">
-            {skillGroups.map((group) => (
-              <article className="loadout-card" key={group.label}>
-                <div className="loadout-head"><span>{group.icon}</span><div><small>ABILITY TREE</small><h3>{group.label}</h3></div><b>LVL {group.level}</b></div>
-                <div className="ability-meter"><span style={{ width: `${group.level}%` }} /></div>
-                <div className="ability-list">{group.skills.map((skill, index) => <span key={skill} className={index < 2 ? "equipped" : ""}><i>{index < 2 ? "◆" : "◇"}</i>{skill}</span>)}</div>
-              </article>
-            ))}
-          </div>
-          <div className="code-strip"><span>PRIMARY LANGUAGES</span><strong>PYTHON</strong><strong>SQL</strong><strong>JAVASCRIPT</strong><strong>C#</strong><strong>JAVA</strong><b>BUILD READY // 100%</b></div>
-        </section>
-
-        <section className="zone academy-zone" id="academy">
-          <ZoneHeading number="05" eyebrow="ACADEMY & LORE" title="The training behind the build." copy="Formal depth in data science and computer science, reinforced by published research and applied industry missions." />
-          <div className="academy-grid">
-            <article className="academy-card msu-card">
-              <div className="academy-seal"><span>MSU</span><i /></div>
-              <div><span className="rarity-tag">LEGENDARY CREDENTIAL</span><small>Michigan State University</small><h3>M.S. Data Science</h3><p>Machine Learning · Natural Language Processing · Foundations of LLMs · Probability & Statistics · Computational Optimization · Data Mining</p></div>
-              <div className="academy-score"><strong>4.0</strong><span>/ 4.0 GPA</span><b>PERFECT RUN</b></div>
+      <section className="content-zone armory-zone" id="armory">
+        <ZoneIntro number="04" eyebrow="SKILL ARMORY" title="The right loadout for the mission." copy="A full-stack toolkit for taking data products from raw signals to governed, observable production systems." />
+        <div className="loadout-grid">
+          {skillGroups.map((group) => (
+            <article className="loadout-card gsap-reveal" key={group.label}>
+              <div className="loadout-head"><span>{group.icon}</span><b>LVL {group.level}</b></div>
+              <h3>{group.label}</h3>
+              <div className="ability-meter"><i style={{ width: `${group.level}%` }} /></div>
+              <div className="ability-list">{group.skills.map((skill, index) => <span key={skill} className={index < 2 ? "equipped" : ""}>{index < 2 ? "◆" : "◇"} {skill}</span>)}</div>
             </article>
-            <article className="academy-card niit-card">
-              <div className="academy-seal"><span>NU</span><i /></div>
-              <div><span className="rarity-tag">EPIC CREDENTIAL</span><small>NIIT University</small><h3>B.Tech Computer Science</h3><p>Computer science foundations, software engineering, algorithms, and applied machine learning.</p></div>
-              <div className="academy-score"><strong>3.6</strong><span>/ 4.0 GPA</span><b>CORE BUILD</b></div>
-            </article>
-            <a className="lore-card" href="https://ieeexplore.ieee.org/document/10372979" target="_blank" rel="noreferrer">
-              <span>DISCOVERED LORE // IEEE</span><h3>Interpretable ECG anomaly detection</h3><p>Peer-reviewed research translating autoencoder representations into clinical anomaly signals.</p><b>READ PUBLICATION ↗</b>
-            </a>
-            <article className="profile-card"><span>PLAYER PROFILE</span><h3>Technical depth.<br />Business clarity.</h3><p>I do my best work where statistical rigor, reliable engineering, and high-stakes decisions overlap.</p><div><b>5</b><small>industry placements</small><b>3</b><small>domains mastered</small></div></article>
-          </div>
-        </section>
+          ))}
+        </div>
+        <div className="language-strip gsap-reveal"><span>PRIMARY LANGUAGES</span><b>PYTHON</b><b>SQL</b><b>JAVASCRIPT</b><b>C#</b><b>JAVA</b><strong>BUILD READY // 100%</strong></div>
+      </section>
 
-        <section className="final-zone" id="contact">
-          <div className="final-grid" aria-hidden="true" />
-          <p className="quest-label">FINAL PROMPT // NEW CAMPAIGN AVAILABLE</p>
-          <h2>Have a hard data problem?</h2>
-          <p>Invite a data scientist who can move between models, infrastructure, and the room where decisions happen.</p>
-          <a className="final-cta" href="mailto:soheevaa@msu.edu"><span>START A CONVERSATION</span><b>soheevaa@msu.edu ↗</b></a>
-          <div className="final-links"><a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer">LINKEDIN ↗</a><a href="https://github.com/vaasu202" target="_blank" rel="noreferrer">GITHUB ↗</a><a href="tel:+15174907865">517-490-7865</a></div>
-        </section>
+      <section className="content-zone academy-zone" id="academy">
+        <ZoneIntro number="05" eyebrow="ACADEMY & LORE" title="The thinking behind the build." copy="Formal depth in data science and computer science, reinforced by published research and applied industry missions." />
+        <div className="academy-grid">
+          <article className="degree-card degree-primary gsap-reveal">
+            <div className="degree-mark">MSU</div>
+            <div><span>LEGENDARY CREDENTIAL</span><small>Michigan State University</small><h3>M.S. Data Science</h3><p>Machine Learning · Natural Language Processing · Foundations of LLMs · Probability & Statistics · Computational Optimization · Data Mining</p></div>
+            <strong>4.0<small>/ 4.0 GPA</small></strong>
+          </article>
+          <article className="degree-card gsap-reveal">
+            <div className="degree-mark">NU</div>
+            <div><span>EPIC CREDENTIAL</span><small>NIIT University</small><h3>B.Tech Computer Science</h3><p>Computer science foundations, software engineering, algorithms, and applied machine learning.</p></div>
+            <strong>3.6<small>/ 4.0 GPA</small></strong>
+          </article>
+          <a className="lore-card gsap-reveal" href="https://ieeexplore.ieee.org/document/10372979" target="_blank" rel="noreferrer">
+            <span>DISCOVERED LORE // IEEE</span><h3>Interpretable ECG anomaly detection</h3><p>Peer-reviewed research translating autoencoder representations into clinical anomaly signals.</p><b>READ PUBLICATION ↗</b>
+          </a>
+          <article className="profile-card gsap-reveal"><span>PLAYER PROFILE</span><h3>Technical depth.<br />Business clarity.</h3><p>I do my best work where statistical rigor, reliable engineering, and high-stakes decisions overlap.</p><div><b>5</b><small>industry placements</small><b>3</b><small>domains mastered</small></div></article>
+        </div>
+      </section>
 
-        <footer><span>VAASU SOHEE // PORTFOLIO CAMPAIGN</span><p>ALL SYSTEMS OPERATIONAL</p><button type="button" onClick={() => jumpTo("command")}>RETURN TO SPAWN ↑</button></footer>
-      </div>
+      <section className="contact-zone" id="contact">
+        <ContourMap />
+        <p>FINAL PROMPT // NEW CAMPAIGN AVAILABLE</p>
+        <h2>LET&apos;S BUILD<br /><em>WHAT&apos;S NEXT.</em></h2>
+        <a className="contact-cta" href="mailto:soheevaa@msu.edu"><span>START A CONVERSATION</span><strong>soheevaa@msu.edu ↗</strong></a>
+        <div className="contact-links">
+          <a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer">LINKEDIN ↗</a>
+          <a href="https://github.com/vaasu202" target="_blank" rel="noreferrer">GITHUB ↗</a>
+          <a href="tel:+15174907865">517-490-7865</a>
+        </div>
+      </section>
+
+      <footer>
+        <span>VAASU SOHEE // PORTFOLIO CAMPAIGN</span>
+        <p>ALL SYSTEMS OPERATIONAL</p>
+        <button type="button" onClick={() => jumpTo("command")}>RETURN TO START ↑</button>
+      </footer>
     </main>
   );
 }
 
-function ZoneHeading({ number, eyebrow, title, copy }: { number: string; eyebrow: string; title: string; copy: string }) {
+function ZoneIntro({ number, eyebrow, title, copy }: { number: string; eyebrow: string; title: string; copy: string }) {
   return (
-    <div className="zone-heading">
-      <div className="zone-code"><span>ZONE</span><strong>{number}</strong></div>
-      <div><p className="quest-label">{eyebrow}</p><h2>{title.split(" ").map((word, index) => <span key={`${word}-${index}`} style={{ transitionDelay: `${index * 55}ms` }}>{word} </span>)}</h2></div>
+    <header className="zone-intro gsap-reveal">
+      <div className="zone-number"><span>ZONE</span><strong>{number}</strong></div>
+      <div><p>{eyebrow}</p><h2>{title}</h2></div>
       <p>{copy}</p>
-    </div>
+    </header>
+  );
+}
+
+function ContourMap() {
+  return (
+    <svg className="contour-map" viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1">
+        <path d="M-80 160C94 46 232 38 354 134s211 65 302-12 220-94 388 10 247 37 294-8" />
+        <path d="M-70 219C92 104 220 94 330 174s219 75 322 3 226-92 392 8 239 41 289-8" />
+        <path d="M-120 346C50 228 176 214 292 286s225 90 342 25 238-83 398 9 232 43 292-16" />
+        <path d="M-95 430C72 312 194 302 318 368s228 86 350 20 247-67 398 16 225 46 284-16" />
+        <path d="M-126 572C36 452 180 430 306 502s231 80 358 16 257-55 400 24 224 44 290-24" />
+        <path d="M-84 670C88 548 222 536 350 602s226 70 348 11 238-41 380 28 221 41 282-30" />
+        <path d="M160-90c92 92 103 190 35 270s-72 164-7 250 60 176-15 274-64 175 15 242" />
+        <path d="M875-100c-84 106-82 203-3 278s84 163 23 251-49 181 35 267 76 168 2 246" />
+      </g>
+    </svg>
   );
 }
