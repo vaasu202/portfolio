@@ -411,12 +411,55 @@ export default function Home() {
         if (finePointer) {
           const xTo = gsap.quickTo(".player-core", "x", { duration: 0.35, ease: "power3.out" });
           const yTo = gsap.quickTo(".player-core", "y", { duration: 0.35, ease: "power3.out" });
+          const hoverCleanup: Array<() => void> = [];
           const onPointerMove = (event: PointerEvent) => {
             xTo((event.clientX / window.innerWidth - 0.5) * 10);
             yTo((event.clientY / window.innerHeight - 0.5) * 8);
           };
+
+          const bindHoverField = (surfaceSelector: string, targetSelector: string, strength: number) => {
+            gsap.utils.toArray<HTMLElement>(surfaceSelector).forEach((surface) => {
+              const targets = surface.querySelectorAll<HTMLElement>(targetSelector);
+              if (!targets.length) return;
+
+              let bounds: DOMRect | null = null;
+              const hoverX = gsap.quickTo(targets, "x", { duration: 0.28, ease: "power3.out" });
+              const hoverY = gsap.quickTo(targets, "y", { duration: 0.28, ease: "power3.out" });
+              const onEnter = () => {
+                bounds = surface.getBoundingClientRect();
+              };
+              const onMove = (event: PointerEvent) => {
+                if (!bounds) return;
+                const xRatio = (event.clientX - bounds.left) / bounds.width - 0.5;
+                const yRatio = (event.clientY - bounds.top) / bounds.height - 0.5;
+                hoverX(xRatio * strength);
+                hoverY(yRatio * strength);
+              };
+              const onLeave = () => {
+                bounds = null;
+                hoverX(0);
+                hoverY(0);
+              };
+
+              surface.addEventListener("pointerenter", onEnter, { passive: true });
+              surface.addEventListener("pointermove", onMove, { passive: true });
+              surface.addEventListener("pointerleave", onLeave, { passive: true });
+              hoverCleanup.push(() => {
+                surface.removeEventListener("pointerenter", onEnter);
+                surface.removeEventListener("pointermove", onMove);
+                surface.removeEventListener("pointerleave", onLeave);
+              });
+            });
+          };
+
+          bindHoverField(".project-card", ".project-visual > b", 24);
+          bindHoverField(".mode-bridge > button", "small, strong, span", 14);
+          bindHoverField(".contact-cta", "span, strong", 10);
           window.addEventListener("pointermove", onPointerMove, { passive: true });
-          return () => window.removeEventListener("pointermove", onPointerMove);
+          return () => {
+            window.removeEventListener("pointermove", onPointerMove);
+            hoverCleanup.forEach((cleanup) => cleanup());
+          };
         }
       },
     );
@@ -450,9 +493,9 @@ export default function Home() {
         </a>
         <span className="nav-glyph" aria-hidden="true">VS</span>
         <div className="nav-actions">
-          <a className="nav-chip nav-resume" href="resume.pdf" target="_blank">RESUME ↗</a>
+          <a className="nav-chip nav-resume" href="resume.pdf" target="_blank"><span>RESUME ↗</span></a>
           <button className="nav-chip scan-trigger" type="button" aria-pressed={scanMode} onClick={() => setScanMode((value) => !value)}>
-            {scanMode ? "SCAN ON" : "SCAN"}
+            <span>{scanMode ? "SCAN ON" : "SCAN"}</span>
           </button>
           <button className="menu-trigger" type="button" aria-label="Open or close navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>
             <i /><i />
@@ -527,8 +570,8 @@ export default function Home() {
               <b>MICHIGAN, USA</b>
             </div>
             <div className="hero-actions">
-              <button type="button" onClick={() => jumpTo("missions")}>START CAMPAIGN <b>↘</b></button>
-              <a href="mailto:soheevaa@msu.edu">OPEN TO DATA & AI ROLES <b>+</b></a>
+              <button type="button" onClick={() => jumpTo("missions")}><span>START CAMPAIGN</span><b>↘</b></button>
+              <a href="mailto:soheevaa@msu.edu"><span>OPEN TO DATA & AI ROLES</span><b>+</b></a>
             </div>
             <div className="hero-scroll"><span>SCROLL TO LOAD</span><i /></div>
           </div>
@@ -749,9 +792,9 @@ export default function Home() {
         <h2>LET&apos;S BUILD<br /><em>WHAT&apos;S NEXT.</em></h2>
         <a className="contact-cta" href="mailto:soheevaa@msu.edu"><span>START A CONVERSATION</span><strong>soheevaa@msu.edu ↗</strong></a>
         <div className="contact-links">
-          <a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer">LINKEDIN ↗</a>
-          <a href="https://github.com/vaasu202" target="_blank" rel="noreferrer">GITHUB ↗</a>
-          <a href="tel:+15174907865">517-490-7865</a>
+          <a href="https://www.linkedin.com/in/vaasu-sohee/" target="_blank" rel="noreferrer"><span>LINKEDIN ↗</span></a>
+          <a href="https://github.com/vaasu202" target="_blank" rel="noreferrer"><span>GITHUB ↗</span></a>
+          <a href="tel:+15174907865"><span>517-490-7865</span></a>
         </div>
       </section>
 
