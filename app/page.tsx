@@ -157,6 +157,49 @@ const achievements = [
   { code: "PERFECT_RUN", value: "4.0", label: "graduate GPA" },
 ];
 
+const proofMoments = [
+  {
+    step: "01",
+    code: "DATA_ARCHITECT",
+    value: "131",
+    unit: "DATASETS GOVERNED",
+    title: "One question. One trusted answer.",
+    copy: "Unified a fragmented analytics landscape into a governed AI layer built for reliable, natural-language decisions.",
+    signals: ["GOVERNANCE", "GENAI", "PROVIDER INSIGHTS"],
+    tone: "lime",
+  },
+  {
+    step: "02",
+    code: "SPEED_RUNNER",
+    value: "80%+",
+    unit: "LATENCY REMOVED",
+    title: "From waiting to working.",
+    copy: "Re-engineered the retrieval and analytics path so complex healthcare questions return useful answers dramatically faster.",
+    signals: ["RETRIEVAL", "PERFORMANCE", "PRODUCTION"],
+    tone: "violet",
+  },
+  {
+    step: "03",
+    code: "RISK_BREAKER",
+    value: "$3.5M",
+    unit: "ANNUAL RISK REDUCED",
+    title: "Forecasting with consequences.",
+    copy: "Combined deep learning and statistical forecasting across more than 40 segments to improve capacity decisions at scale.",
+    signals: ["TFT", "SARIMAX", "40+ SEGMENTS"],
+    tone: "cyan",
+  },
+  {
+    step: "04",
+    code: "PERFECT_RUN",
+    value: "4.0",
+    unit: "GRADUATE GPA",
+    title: "Rigor behind the build.",
+    copy: "Graduate work in data science reinforced the mathematical depth behind every model, experiment, and system decision.",
+    signals: ["ML", "STATISTICS", "OPTIMIZATION"],
+    tone: "gold",
+  },
+];
+
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [activeZone, setActiveZone] = useState("command");
@@ -238,7 +281,7 @@ export default function Home() {
         };
 
         if (shouldReduce) {
-          gsap.set(".gsap-reveal, .manifesto-line, .hero-message", { clearProps: "all" });
+          gsap.set(".gsap-reveal, .manifesto-line, .manifesto-word, .hero-message, .proof-slide, .proof-field, .proof-machine", { clearProps: "all" });
           return;
         }
 
@@ -274,17 +317,80 @@ export default function Home() {
             .fromTo(".hero-signature", { autoAlpha: 0, scale: 0.82, rotation: -8 }, { autoAlpha: 1, scale: 1, rotation: -3, ease: "power3.out" }, 0.38);
         }
 
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: ".manifesto-zone",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.75,
-          },
-        })
-          .fromTo(".manifesto-line:nth-child(1)", { xPercent: -18 }, { xPercent: 4, ease: "none" }, 0)
-          .fromTo(".manifesto-line:nth-child(2)", { xPercent: 15 }, { xPercent: -5, ease: "none" }, 0)
-          .fromTo(".manifesto-line:nth-child(3)", { xPercent: -10 }, { xPercent: 6, ease: "none" }, 0);
+        if (desktop) {
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: ".manifesto-zone",
+              start: "top top",
+              end: "+=135%",
+              pin: true,
+              scrub: 0.75,
+              anticipatePin: 1,
+            },
+          })
+            .from(".manifesto-word", {
+              autoAlpha: 0.1,
+              yPercent: 42,
+              rotationX: -18,
+              stagger: 0.045,
+              ease: "none",
+            }, 0)
+            .fromTo(".manifesto-line:nth-child(1)", { xPercent: -18 }, { xPercent: 4, ease: "none" }, 0)
+            .fromTo(".manifesto-line:nth-child(2)", { xPercent: 15 }, { xPercent: -5, ease: "none" }, 0)
+            .fromTo(".manifesto-line:nth-child(3)", { xPercent: -10 }, { xPercent: 6, ease: "none" }, 0)
+            .from(".manifesto-zone > p", { autoAlpha: 0, y: 44, ease: "power2.out" }, 0.55);
+
+          const proofSlides = gsap.utils.toArray<HTMLElement>(".proof-slide");
+          const proofFields = gsap.utils.toArray<HTMLElement>(".proof-field");
+          const proofSteps = gsap.utils.toArray<HTMLElement>(".proof-step");
+          gsap.set(proofSlides.slice(1), { autoAlpha: 0, yPercent: 18 });
+          gsap.set(proofFields.slice(1), { autoAlpha: 0 });
+          gsap.set(proofSteps, { opacity: 0.3 });
+          gsap.set(proofSteps[0], { opacity: 1 });
+
+          const proofTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".proof-scene",
+              start: "top top",
+              end: `+=${(proofMoments.length - 1) * 105}%`,
+              pin: ".proof-pin",
+              scrub: 0.8,
+              anticipatePin: 1,
+            },
+          });
+
+          proofTimeline.to(".proof-machine", { rotation: 12, scale: 1.04, duration: 0.45, ease: "power2.inOut" });
+          proofMoments.slice(1).forEach((_, index) => {
+            const next = index + 1;
+            proofTimeline
+              .to(proofSlides[index], { autoAlpha: 0, yPercent: -16, duration: 0.34, ease: "power2.inOut" })
+              .to(proofFields[index], { autoAlpha: 0, duration: 0.38, ease: "none" }, "<")
+              .fromTo(proofFields[next], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.38, ease: "none" }, "<")
+              .fromTo(proofSlides[next], { autoAlpha: 0, yPercent: 16 }, { autoAlpha: 1, yPercent: 0, duration: 0.42, ease: "power2.out" }, "<0.1")
+              .to(".proof-machine", {
+                rotation: next % 2 ? -34 : 38,
+                scale: next % 2 ? 0.94 : 1.08,
+                duration: 0.46,
+                ease: "power2.inOut",
+              }, "<")
+              .to(proofSteps[index], { opacity: 0.3, duration: 0.18 }, "<")
+              .to(proofSteps[next], { opacity: 1, duration: 0.18 }, "<")
+              .to({}, { duration: 0.42 });
+          });
+        } else {
+          gsap.from(".manifesto-word", {
+            autoAlpha: 0.12,
+            yPercent: 34,
+            stagger: 0.04,
+            duration: 0.65,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".manifesto-zone h2",
+              start: "top 82%",
+              once: true,
+            },
+          });
+        }
 
         gsap.set(".gsap-reveal", { autoAlpha: 0, y: 56 });
         ScrollTrigger.batch(".gsap-reveal", {
@@ -304,19 +410,20 @@ export default function Home() {
           },
         });
 
-        gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
+        gsap.utils.toArray<HTMLElement>(".project-card").forEach((card, index) => {
           const visual = card.querySelector(".project-visual");
+          const copy = card.querySelector(".project-copy");
           if (!visual) return;
-          gsap.fromTo(visual, { yPercent: -8 }, {
-            yPercent: 8,
-            ease: "none",
+          gsap.timeline({
             scrollTrigger: {
               trigger: card,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.6,
+              start: "top 92%",
+              end: "bottom 8%",
+              scrub: 0.65,
             },
-          });
+          })
+            .fromTo(visual, { yPercent: -8, scale: 0.94 }, { yPercent: 8, scale: 1.04, ease: "none" }, 0)
+            .fromTo(copy, { xPercent: index % 2 ? -4 : 4 }, { xPercent: index % 2 ? 2 : -2, ease: "none" }, 0);
         });
 
         gsap.to(".ticker-track", {
@@ -475,11 +582,71 @@ export default function Home() {
         <ContourMap />
         <div className="manifesto-top"><span>PLAYER MANIFESTO // 001</span><b>BUILT FOR PRODUCTION</b></div>
         <h2 id="manifesto-title">
-          <span className="manifesto-line">Find the <em>signal.</em></span>
-          <span className="manifesto-line">Build the <b>system.</b></span>
-          <span className="manifesto-line">Ship <strong>measurable impact.</strong></span>
+          <span className="manifesto-line">
+            <span className="manifesto-word">Find</span>{" "}
+            <span className="manifesto-word">the</span>{" "}
+            <em className="manifesto-word">signal.</em>
+          </span>
+          <span className="manifesto-line">
+            <span className="manifesto-word">Build</span>{" "}
+            <span className="manifesto-word">the</span>{" "}
+            <b className="manifesto-word">system.</b>
+          </span>
+          <span className="manifesto-line">
+            <span className="manifesto-word">Ship</span>{" "}
+            <strong className="manifesto-word">measurable impact.</strong>
+          </span>
         </h2>
         <p>From statistical rigor to reliable infrastructure, every layer exists to help a real decision happen faster and with more confidence.</p>
+      </section>
+
+      <section className="proof-scene" aria-labelledby="proof-title">
+        <div className="proof-pin">
+          <div className="proof-fields" aria-hidden="true">
+            {proofMoments.map((moment) => <span className={`proof-field proof-field-${moment.tone}`} key={moment.code} />)}
+          </div>
+          <ContourMap />
+          <header className="proof-head">
+            <div><span>IMPACT SYSTEM</span><b>VERIFIED OUTPUT</b></div>
+            <p id="proof-title">Scroll through the proof</p>
+          </header>
+
+          <div className="proof-stage">
+            <div className="proof-machine" aria-hidden="true">
+              <span className="machine-ring ring-outer" />
+              <span className="machine-ring ring-inner" />
+              <span className="machine-axis axis-horizontal" />
+              <span className="machine-axis axis-vertical" />
+              <i>VS</i>
+              <b>IMPACT</b>
+            </div>
+
+            <div className="proof-slides">
+              {proofMoments.map((moment) => (
+                <article className="proof-slide" key={moment.code}>
+                  <div className="proof-score">
+                    <span>{moment.code}</span>
+                    <strong>{moment.value}</strong>
+                    <small>{moment.unit}</small>
+                  </div>
+                  <div className="proof-copy">
+                    <span>PROOF LOG // {moment.step}</span>
+                    <h2>{moment.title}</h2>
+                    <p>{moment.copy}</p>
+                    <div>{moment.signals.map((signal) => <b key={signal}>{signal}</b>)}</div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="proof-steps" aria-hidden="true">
+            {proofMoments.map((moment) => (
+              <div className="proof-step" key={moment.code}><span>{moment.step}</span><i /><b>{moment.code}</b></div>
+            ))}
+          </div>
+          <p className="proof-hint">KEEP SCROLLING <span>↓</span></p>
+        </div>
       </section>
 
       <section className="content-zone missions-zone" id="missions">

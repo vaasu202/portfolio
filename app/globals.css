@@ -397,10 +397,86 @@ a { text-decoration: none; }
 .manifesto-top { position: absolute; left: 3vw; right: 3vw; top: 32px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--line-light); padding-bottom: 12px; color: var(--lime); font: 500 9px var(--mono); letter-spacing: .1em; }
 .manifesto-zone h2 { position: relative; z-index: 1; margin: 0; display: grid; font: 900 clamp(64px, 10.2vw, 164px)/.78 var(--display); letter-spacing: -.078em; text-transform: uppercase; }
 .manifesto-line { display: block; width: max-content; will-change: transform; }
+.manifesto-word { display: inline-block; transform-origin: 50% 100%; will-change: transform, opacity; }
 .manifesto-line:nth-child(2) { justify-self: end; }
 .manifesto-line em, .manifesto-line strong { color: var(--lime); font-family: var(--serif); font-style: italic; font-weight: 700; text-transform: none; }
 .manifesto-line b { color: var(--cream); font-weight: inherit; -webkit-text-stroke: 1px var(--cream); color: transparent; }
 .manifesto-zone > p { position: relative; z-index: 1; align-self: flex-end; width: min(520px, 46vw); margin: 46px 6vw 0 0; color: var(--cream-2); font-size: 17px; line-height: 1.65; }
+
+/* Scroll-controlled proof engine */
+.proof-scene { position: relative; background: var(--lime); color: var(--ink); }
+.proof-pin { position: relative; min-height: 100svh; overflow: hidden; padding: 90px 18px 110px; }
+.proof-fields, .proof-field { position: absolute; inset: 0; }
+.proof-fields { z-index: 0; pointer-events: none; }
+.proof-field { display: block; will-change: opacity; }
+.proof-field-lime { background: var(--lime); }
+.proof-field-violet { background: #cec4ff; }
+.proof-field-cyan { background: #85e6ef; }
+.proof-field-gold { background: #efc369; }
+.proof-field:not(:first-child) { opacity: 0; }
+.proof-pin > .contour-map { z-index: 1; color: var(--ink); opacity: .11; }
+.proof-pin > *:not(.proof-fields, .contour-map) { position: relative; z-index: 2; }
+.proof-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(23,26,21,.45);
+}
+.proof-head > div { display: grid; gap: 4px; font: 500 8px var(--mono); letter-spacing: .12em; }
+.proof-head > div b { color: rgba(23,26,21,.58); }
+.proof-head > p { margin: 0; font: 900 clamp(25px, 4vw, 54px)/.84 var(--display); letter-spacing: -.06em; text-transform: uppercase; }
+.proof-stage { position: relative; }
+.proof-machine {
+  position: relative;
+  width: min(72vw, 300px);
+  aspect-ratio: 1;
+  margin: 68px auto 34px;
+  border: 1px solid rgba(23,26,21,.48);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+.proof-machine::before, .proof-machine::after {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border: 1px solid rgba(23,26,21,.35);
+  transform: rotate(45deg);
+}
+.proof-machine::after { inset: 31%; background: rgba(241,240,231,.78); }
+.machine-ring { position: absolute; border: 1px solid rgba(23,26,21,.32); border-radius: 50%; }
+.ring-outer { inset: -8%; border-style: dashed; }
+.ring-inner { inset: 24%; }
+.machine-axis { position: absolute; display: block; background: rgba(23,26,21,.45); }
+.axis-horizontal { left: -12%; right: -12%; height: 1px; }
+.axis-vertical { top: -12%; bottom: -12%; width: 1px; }
+.proof-machine i { position: relative; z-index: 2; font: 900 clamp(44px, 7vw, 90px)/.75 var(--display); letter-spacing: -.1em; font-style: normal; }
+.proof-machine b { position: absolute; z-index: 2; bottom: 27%; font: 500 7px var(--mono); letter-spacing: .14em; }
+.proof-slides { display: grid; gap: 12px; }
+.proof-slide {
+  min-height: 470px;
+  display: grid;
+  gap: 32px;
+  align-content: center;
+  padding: 32px 20px;
+  border: 1px solid var(--ink);
+  background: rgba(241,240,231,.78);
+  will-change: transform, opacity;
+}
+.proof-score { display: grid; align-content: center; }
+.proof-score > span, .proof-score > small, .proof-copy > span { font: 500 8px var(--mono); letter-spacing: .12em; }
+.proof-score > strong { margin: 16px 0 9px; font: 900 clamp(82px, 25vw, 160px)/.68 var(--display); letter-spacing: -.1em; }
+.proof-score > small { color: rgba(23,26,21,.66); }
+.proof-copy > span { display: block; margin-bottom: 20px; }
+.proof-copy h2 { max-width: 660px; margin: 0; font: 900 clamp(38px, 10vw, 74px)/.86 var(--display); letter-spacing: -.07em; text-transform: uppercase; }
+.proof-copy p { max-width: 620px; margin: 24px 0; font-size: 16px; line-height: 1.58; }
+.proof-copy > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.proof-copy > div b { padding: 7px 8px; border: 1px solid rgba(23,26,21,.38); font: 500 8px var(--mono); }
+.proof-steps { display: none; }
+.proof-hint { display: none; }
 
 .content-zone { position: relative; padding: clamp(90px, 10vw, 150px) max(24px, 5vw); scroll-margin-top: 0; }
 .zone-intro {
@@ -601,6 +677,78 @@ footer p { color: var(--lime); } footer button { justify-self: end; border: 0; b
 .scan-active .loadout-card,
 .scan-active .degree-card { box-shadow: inset 0 0 0 2px var(--cyan); }
 
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .proof-pin { height: 100svh; min-height: 680px; padding: 0; }
+  .proof-head {
+    position: absolute !important;
+    left: 3vw;
+    right: 3vw;
+    top: 92px;
+    z-index: 4 !important;
+  }
+  .proof-head > p { font-size: clamp(28px, 3.6vw, 56px); }
+  .proof-stage { position: absolute !important; inset: 0; }
+  .proof-slides, .proof-slide { position: absolute; inset: 0; }
+  .proof-machine {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 50%;
+    width: min(31vw, 480px);
+    margin: 0;
+    transform: translate(-50%, -50%);
+  }
+  .proof-slide {
+    z-index: 2;
+    min-height: 0;
+    grid-template-columns: minmax(250px, 1fr) minmax(300px, 1fr);
+    align-content: center;
+    align-items: center;
+    gap: min(36vw, 570px);
+    padding: 110px 4vw 125px;
+    border: 0;
+    background: transparent;
+  }
+  .proof-score > strong { font-size: clamp(110px, 13vw, 210px); }
+  .proof-copy { max-width: 680px; }
+  .proof-copy h2 { font-size: clamp(48px, 5.4vw, 86px); }
+  .proof-copy p { font-size: 17px; }
+  .proof-steps {
+    position: absolute !important;
+    z-index: 4 !important;
+    left: 3vw;
+    right: 3vw;
+    bottom: 28px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(23,26,21,.45);
+  }
+  .proof-step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 14px 0 0;
+    font: 500 8px var(--mono);
+    letter-spacing: .08em;
+  }
+  .proof-step i { height: 3px; background: var(--ink); transform-origin: left; }
+  .proof-step b { grid-column: 1 / -1; color: rgba(23,26,21,.58); font-weight: 500; }
+  .proof-hint {
+    position: absolute !important;
+    z-index: 4 !important;
+    right: 3vw;
+    bottom: 94px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font: 500 8px var(--mono);
+    letter-spacing: .12em;
+  }
+  .proof-hint span { font-size: 18px; }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .nav-chip:hover, .menu-trigger:hover { background: var(--lime); color: var(--ink); }
   .menu-panel > button:hover span { transform: translateX(12px); }
@@ -679,6 +827,13 @@ footer p { color: var(--lime); } footer button { justify-self: end; border: 0; b
   .manifesto-zone h2 { font-size: clamp(46px, 15.4vw, 86px); line-height: .82; }
   .manifesto-line:nth-child(2) { justify-self: start; }
   .manifesto-zone > p { width: 100%; margin: 34px 0 0; font-size: 15px; }
+  .proof-pin { padding: 92px 14px 92px; }
+  .proof-head { align-items: start; }
+  .proof-head > p { max-width: 160px; text-align: right; font-size: 24px; }
+  .proof-machine { width: min(68vw, 270px); margin-top: 58px; }
+  .proof-slide { min-height: 440px; padding: 28px 18px; }
+  .proof-score > strong { font-size: clamp(82px, 28vw, 130px); }
+  .proof-copy h2 { font-size: clamp(39px, 12vw, 62px); }
   .zone-intro { grid-template-columns: 56px 1fr; gap: 14px; }
   .zone-number { width: 56px; height: 56px; }.zone-number strong { font-size: 24px; }
   .zone-intro h2 { font-size: clamp(42px, 13vw, 66px); }
@@ -726,5 +881,6 @@ footer p { color: var(--lime); } footer button { justify-self: end; border: 0; b
   .boot-screen { display: none; }
   .gsap-reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; }
   .hero-message { display: none; }
-  .manifesto-line, .project-visual, .ticker-track, .player-core { transform: none !important; }
+  .manifesto-line, .manifesto-word, .project-visual, .project-copy, .ticker-track, .player-core, .proof-slide, .proof-machine { transform: none !important; }
+  .manifesto-word, .proof-slide { opacity: 1 !important; visibility: visible !important; }
 }
