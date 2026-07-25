@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     description: "Explore production ML, data engineering, and GenAI work through an interactive portfolio campaign.",
     images: ["/og.png"],
   },
-  icons: { icon: `${basePath}/favicon.svg` },
+  icons: { icon: `${basePath}/teddy-bear.svg`, shortcut: `${basePath}/teddy-bear.svg` },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

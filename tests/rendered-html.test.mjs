@@ -33,7 +33,7 @@ test("includes the downloadable resume and social preview", async () => {
   await Promise.all([
     access(new URL("../out/resume.pdf", import.meta.url)),
     access(new URL("../out/og.png", import.meta.url)),
-    access(new URL("../out/favicon.svg", import.meta.url)),
+    access(new URL("../out/teddy-bear.svg", import.meta.url)),
     access(new URL("../out/logos/delta-dental.jpg", import.meta.url)),
     access(new URL("../out/logos/ey.svg", import.meta.url)),
     access(new URL("../out/logos/exodrone-systems.png", import.meta.url)),
