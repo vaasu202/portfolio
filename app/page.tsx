@@ -239,10 +239,10 @@ export default function Home() {
       gsap.set(".boot-screen", { display: "none" });
     } else {
       gsap.timeline({ defaults: { ease: "power3.out" } })
-        .from(".boot-mark", { autoAlpha: 0, scale: 0.94, duration: 0.5 })
-        .from(".boot-copy > *", { autoAlpha: 0, y: 14, stagger: 0.08, duration: 0.42 }, "<0.05")
-        .to(".boot-progress span", { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, 0.25)
-        .to(".boot-screen", { yPercent: -100, duration: 0.72, ease: "power4.inOut" }, "+=0.1")
+        .from(".boot-mark", { autoAlpha: 0, scale: 0.96, duration: 0.34 })
+        .from(".boot-copy > *", { autoAlpha: 0, y: 10, stagger: 0.06, duration: 0.28 }, "<0.04")
+        .to(".boot-progress span", { scaleX: 1, duration: 0.48, ease: "power2.inOut" }, 0.16)
+        .to(".boot-screen", { yPercent: -100, duration: 0.52, ease: "power3.inOut" }, "+=0.04")
         .set(".boot-screen", { display: "none" });
     }
 
@@ -286,65 +286,55 @@ export default function Home() {
         }
 
         const intro = gsap.timeline({
-          defaults: { duration: 0.78, ease: "power4.out" },
+          defaults: { duration: 0.58, ease: "power3.out" },
         });
         intro
           .from(".race-nav", { autoAlpha: 0, y: -24 })
           .from(".hero-kicker", { autoAlpha: 0, y: 20 }, "<0.12")
-          .from(".hero-name span", { autoAlpha: 0, yPercent: 115, stagger: 0.09 }, "<0.05")
-          .from(".player-core", { autoAlpha: 0, scale: 0.9, rotation: -4 }, "<0.12")
-          .from(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 16, stagger: 0.08 }, "<0.18");
+          .from(".hero-name", { autoAlpha: 0, y: 24 }, "<0.05")
+          .from(".player-core", { autoAlpha: 0 }, "<0.12")
+          .from(".hero-meta > *, .hero-actions > *, .hero-scroll > *", { autoAlpha: 0, y: 12, stagger: 0.05 }, "<0.18");
 
         if (desktop) {
           gsap.timeline({
             scrollTrigger: {
               trigger: ".hero-scene",
               start: "top top",
-              end: "+=155%",
-              pin: ".hero-pin",
-              scrub: 0.8,
+              end: "+=85%",
+              pin: true,
+              scrub: 0.25,
               anticipatePin: 1,
             },
           })
-            .to(".hero-name .name-a", { xPercent: -34, autoAlpha: 0, ease: "power2.inOut" }, 0)
-            .to(".hero-name .name-b", { xPercent: 34, autoAlpha: 0, ease: "power2.inOut" }, 0)
-            .to(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 24, ease: "power2.inOut" }, 0)
-            .to(".player-core", { scale: 1.44, rotation: 7, ease: "power2.inOut" }, 0)
+            .to(".hero-name span", { autoAlpha: 0, y: -18, stagger: 0.025, ease: "power2.inOut" }, 0)
+            .to(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 16, ease: "power2.inOut" }, 0)
+            .to(".player-core", { scale: 1.12, rotation: 3, ease: "power2.inOut" }, 0)
             .to(".hero-light-layer", { autoAlpha: 0, ease: "power2.inOut" }, 0.2)
-            .fromTo(".hero-message", { autoAlpha: 0, scale: 0.98 }, { autoAlpha: 1, scale: 1, ease: "power2.inOut" }, 0.28)
-            .fromTo(".marquee-a", { xPercent: 12 }, { xPercent: -16, ease: "none" }, 0.28)
-            .fromTo(".marquee-b", { xPercent: -14 }, { xPercent: 15, ease: "none" }, 0.28)
-            .fromTo(".hero-signature", { autoAlpha: 0, scale: 0.82, rotation: -8 }, { autoAlpha: 1, scale: 1, rotation: -3, ease: "power3.out" }, 0.38);
+            .fromTo(".hero-message", { autoAlpha: 0 }, { autoAlpha: 1, ease: "power2.inOut" }, 0.24)
+            .from(".hero-marquee", { autoAlpha: 0, y: 24, stagger: 0.06, ease: "power2.out" }, 0.32)
+            .fromTo(".hero-signature", { autoAlpha: 0, scale: 0.94, rotation: -4 }, { autoAlpha: 0.7, scale: 1, rotation: -2, ease: "power2.out" }, 0.38);
         }
 
-        if (desktop) {
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: ".manifesto-zone",
-              start: "top top",
-              end: "+=135%",
-              pin: true,
-              scrub: 0.75,
-              anticipatePin: 1,
-            },
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".manifesto-zone h2",
+            start: "top 80%",
+            once: true,
+          },
+          defaults: { ease: "power3.out" },
+        })
+          .from(".manifesto-word", {
+            autoAlpha: 0.12,
+            yPercent: 24,
+            stagger: 0.035,
+            duration: 0.56,
           })
-            .from(".manifesto-word", {
-              autoAlpha: 0.1,
-              yPercent: 42,
-              rotationX: -18,
-              stagger: 0.045,
-              ease: "none",
-            }, 0)
-            .fromTo(".manifesto-line:nth-child(1)", { xPercent: -18 }, { xPercent: 4, ease: "none" }, 0)
-            .fromTo(".manifesto-line:nth-child(2)", { xPercent: 15 }, { xPercent: -5, ease: "none" }, 0)
-            .fromTo(".manifesto-line:nth-child(3)", { xPercent: -10 }, { xPercent: 6, ease: "none" }, 0)
-            .from(".manifesto-zone > p", { autoAlpha: 0, y: 44, ease: "power2.out" }, 0.55);
+          .from(".manifesto-zone > p", { autoAlpha: 0, y: 20, duration: 0.46 }, "-=0.26");
 
+        if (desktop) {
           const proofSlides = gsap.utils.toArray<HTMLElement>(".proof-slide");
-          const proofFields = gsap.utils.toArray<HTMLElement>(".proof-field");
           const proofSteps = gsap.utils.toArray<HTMLElement>(".proof-step");
-          gsap.set(proofSlides.slice(1), { autoAlpha: 0, yPercent: 18 });
-          gsap.set(proofFields.slice(1), { autoAlpha: 0 });
+          gsap.set(proofSlides.slice(1), { autoAlpha: 0, y: 24 });
           gsap.set(proofSteps, { opacity: 0.3 });
           gsap.set(proofSteps[0], { opacity: 1 });
 
@@ -352,49 +342,33 @@ export default function Home() {
             scrollTrigger: {
               trigger: ".proof-scene",
               start: "top top",
-              end: `+=${(proofMoments.length - 1) * 105}%`,
-              pin: ".proof-pin",
-              scrub: 0.8,
+              end: `+=${(proofMoments.length - 1) * 72}%`,
+              pin: true,
+              scrub: 0.25,
               anticipatePin: 1,
             },
           });
 
-          proofTimeline.to(".proof-machine", { rotation: 12, scale: 1.04, duration: 0.45, ease: "power2.inOut" });
+          proofTimeline.to(".proof-machine", { rotation: 5, duration: 0.32, ease: "power2.inOut" });
           proofMoments.slice(1).forEach((_, index) => {
             const next = index + 1;
             proofTimeline
-              .to(proofSlides[index], { autoAlpha: 0, yPercent: -16, duration: 0.34, ease: "power2.inOut" })
-              .to(proofFields[index], { autoAlpha: 0, duration: 0.38, ease: "none" }, "<")
-              .fromTo(proofFields[next], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.38, ease: "none" }, "<")
-              .fromTo(proofSlides[next], { autoAlpha: 0, yPercent: 16 }, { autoAlpha: 1, yPercent: 0, duration: 0.42, ease: "power2.out" }, "<0.1")
+              .to(proofSlides[index], { autoAlpha: 0, y: -20, duration: 0.28, ease: "power2.inOut" })
+              .fromTo(proofSlides[next], { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.34, ease: "power2.out" }, "<0.06")
               .to(".proof-machine", {
-                rotation: next % 2 ? -34 : 38,
-                scale: next % 2 ? 0.94 : 1.08,
-                duration: 0.46,
+                rotation: next % 2 ? -8 : 8,
+                duration: 0.34,
                 ease: "power2.inOut",
               }, "<")
               .to(proofSteps[index], { opacity: 0.3, duration: 0.18 }, "<")
               .to(proofSteps[next], { opacity: 1, duration: 0.18 }, "<")
-              .to({}, { duration: 0.42 });
-          });
-        } else {
-          gsap.from(".manifesto-word", {
-            autoAlpha: 0.12,
-            yPercent: 34,
-            stagger: 0.04,
-            duration: 0.65,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".manifesto-zone h2",
-              start: "top 82%",
-              once: true,
-            },
+              .to({}, { duration: 0.28 });
           });
         }
 
-        gsap.set(".gsap-reveal", { autoAlpha: 0, y: 56 });
+        gsap.set(".gsap-reveal", { autoAlpha: 0, y: 22 });
         ScrollTrigger.batch(".gsap-reveal", {
-          start: "top 88%",
+          start: "top 90%",
           once: true,
           interval: 0.08,
           batchMax: 4,
@@ -402,43 +376,44 @@ export default function Home() {
             gsap.to(elements, {
               autoAlpha: 1,
               y: 0,
-              duration: 0.76,
-              stagger: 0.08,
-              ease: "power4.out",
+              duration: 0.5,
+              stagger: 0.06,
+              ease: "power3.out",
               overwrite: true,
             });
           },
         });
 
-        gsap.utils.toArray<HTMLElement>(".project-card").forEach((card, index) => {
-          const visual = card.querySelector(".project-visual");
-          const copy = card.querySelector(".project-copy");
-          if (!visual) return;
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: card,
-              start: "top 92%",
-              end: "bottom 8%",
-              scrub: 0.65,
-            },
-          })
-            .fromTo(visual, { yPercent: -8, scale: 0.94 }, { yPercent: 8, scale: 1.04, ease: "none" }, 0)
-            .fromTo(copy, { xPercent: index % 2 ? -4 : 4 }, { xPercent: index % 2 ? 2 : -2, ease: "none" }, 0);
-        });
+        if (desktop) {
+          gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
+            const visual = card.querySelector(".project-visual");
+            if (!visual) return;
+            gsap.fromTo(visual, { yPercent: -3 }, {
+              yPercent: 3,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.2,
+              },
+            });
+          });
+        }
 
         gsap.to(".ticker-track", {
           xPercent: -50,
-          duration: 22,
+          duration: 32,
           repeat: -1,
           ease: "none",
         });
 
         if (finePointer) {
-          const xTo = gsap.quickTo(".player-core", "x", { duration: 0.55, ease: "power3.out" });
-          const yTo = gsap.quickTo(".player-core", "y", { duration: 0.55, ease: "power3.out" });
+          const xTo = gsap.quickTo(".player-core", "x", { duration: 0.35, ease: "power3.out" });
+          const yTo = gsap.quickTo(".player-core", "y", { duration: 0.35, ease: "power3.out" });
           const onPointerMove = (event: PointerEvent) => {
-            xTo((event.clientX / window.innerWidth - 0.5) * 22);
-            yTo((event.clientY / window.innerHeight - 0.5) * 18);
+            xTo((event.clientX / window.innerWidth - 0.5) * 10);
+            yTo((event.clientY / window.innerHeight - 0.5) * 8);
           };
           window.addEventListener("pointermove", onPointerMove, { passive: true });
           return () => window.removeEventListener("pointermove", onPointerMove);
@@ -560,8 +535,8 @@ export default function Home() {
 
           <div className="hero-message" aria-hidden="true">
             <span className="message-label">PLAYER MANIFESTO // 001</span>
-            <div className="hero-marquee marquee-a">BUILD SYSTEMS THAT MATTER · BUILD SYSTEMS THAT MATTER ·</div>
-            <div className="hero-marquee marquee-b">SHIP MEASURABLE IMPACT · SHIP MEASURABLE IMPACT ·</div>
+            <div className="hero-marquee marquee-a">BUILD SYSTEMS THAT MATTER</div>
+            <div className="hero-marquee marquee-b">SHIP MEASURABLE IMPACT</div>
             <div className="hero-signature">VS</div>
             <p>MODELS · INFRASTRUCTURE · DECISIONS</p>
           </div>
@@ -594,7 +569,10 @@ export default function Home() {
           </span>
           <span className="manifesto-line">
             <span className="manifesto-word">Ship</span>{" "}
-            <strong className="manifesto-word">measurable impact.</strong>
+            <strong>
+              <span className="manifesto-word">measurable</span>{" "}
+              <span className="manifesto-word">impact.</span>
+            </strong>
           </span>
         </h2>
         <p>From statistical rigor to reliable infrastructure, every layer exists to help a real decision happen faster and with more confidence.</p>
@@ -623,7 +601,7 @@ export default function Home() {
 
             <div className="proof-slides">
               {proofMoments.map((moment) => (
-                <article className="proof-slide" key={moment.code}>
+                <article className={`proof-slide proof-slide-${moment.tone}`} key={moment.code}>
                   <div className="proof-score">
                     <span>{moment.code}</span>
                     <strong>{moment.value}</strong>
