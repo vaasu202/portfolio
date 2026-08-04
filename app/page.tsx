@@ -104,6 +104,19 @@ const experiences = [
 
 const projects = [
   {
+    encounter: "LEGENDARY / OPEN SOURCE",
+    difficulty: "★★★★★",
+    title: "AgentGuard",
+    client: "Independent Project",
+    description: "A runtime security gateway for AI agents that intercepts MCP tool calls, enforces deterministic policy, redacts secrets, pauses risky actions for human approval, and writes a tamper-evident audit trail.",
+    reward: "BLOCK",
+    rewardLabel: "unsafe tool execution",
+    stats: ["4 attack fixtures", "4 agent runtimes", "Tamper-evident audit"],
+    tools: ["MCP", "OpenAI Agents", "LangGraph", "Mastra", "PydanticAI", "Qdrant"],
+    href: "https://github.com/vaasu202/agentguard",
+    image: "projects/agentguard-demo.png",
+  },
+  {
     encounter: "LEGENDARY / NDA",
     difficulty: "★★★★★",
     title: "Demand & Capacity Forecasting",
@@ -114,6 +127,7 @@ const projects = [
     stats: ["22% RMSE improvement", "18% MAPE improvement", "40+ segments"],
     tools: ["TFT", "SARIMAX", "Time Series", "Python"],
     href: null,
+    image: null,
   },
   {
     encounter: "EPIC / OPEN SOURCE",
@@ -126,6 +140,7 @@ const projects = [
     stats: ["Hybrid retrieval", "Structured calling", "Natural-language Q&A"],
     tools: ["LangGraph", "GPT-4.1", "ChromaDB", "Streamlit"],
     href: "https://github.com/vaasu202/Agentic-RAG-Postmortem-Reporting",
+    image: null,
   },
   {
     encounter: "RARE / PUBLISHED",
@@ -138,6 +153,7 @@ const projects = [
     stats: ["Clinical ECG", "Interpretable ML", "Anomaly detection"],
     tools: ["Autoencoders", "PyTorch", "Clinical ML"],
     href: "https://ieeexplore.ieee.org/document/10372979",
+    image: null,
   },
 ];
 
@@ -712,13 +728,14 @@ export default function Home() {
       </section>
 
       <section className="content-zone projects-zone" id="projects">
-        <ZoneIntro number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work. Real stakes." copy="Three challenges where modeling quality, systems thinking, and business translation had to work together." />
+        <ZoneIntro number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work. Real stakes." copy="Four challenges where modeling quality, systems thinking, security, and business translation had to work together." />
         <div className="project-stack">
           {projects.map((project, index) => {
             const content = (
               <>
-                <div className="project-visual" aria-hidden="true">
+                <div className={`project-visual ${project.image ? "project-visual-image" : ""}`} aria-hidden="true">
                   <span>0{index + 1}</span>
+                  {project.image ? <Image src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" /> : null}
                   <i /><i /><i />
                   <b>{project.reward}</b>
                 </div>
