@@ -23,8 +23,14 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.match(html, /logos\/ey\.svg/);
   assert.match(html, /logos\/exodrone-systems\.png/);
   assert.match(html, /logos\/niit-technologies\.svg/);
+  assert.match(html, /Longview/);
+  assert.match(html, /Demand &amp; Capacity Forecasting Capstone/);
+  assert.match(html, /Nexus/);
   assert.match(html, /Multi-Agent GenAI Retrieval Platform/);
   assert.match(html, /AgentGuard/);
+  assert.match(html, /Security Gateway for AI Agents/);
+  assert.match(html, /ECG Anomaly Detection/);
+  assert.match(html, /Published Research/);
   assert.match(html, /runtime security gateway/i);
   assert.match(html, /github\.com\/vaasu202\/agentguard/);
   assert.match(html, /projects\/agentguard-demo\.png/);

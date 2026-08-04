@@ -106,7 +106,8 @@ const projects = [
   {
     encounter: "LEGENDARY / OPEN SOURCE",
     difficulty: "★★★★★",
-    title: "AgentGuard",
+    name: "AgentGuard",
+    title: "Security Gateway for AI Agents",
     client: "Independent Project",
     description: "A runtime security gateway for AI agents that intercepts MCP tool calls, enforces deterministic policy, redacts secrets, pauses risky actions for human approval, and writes a tamper-evident audit trail.",
     reward: "BLOCK",
@@ -119,7 +120,8 @@ const projects = [
   {
     encounter: "LEGENDARY / NDA",
     difficulty: "★★★★★",
-    title: "Demand & Capacity Forecasting",
+    name: "Longview",
+    title: "Demand & Capacity Forecasting Capstone",
     client: "Jackson National Life",
     description: "A multi-segment forecasting system combining Temporal Fusion Transformer and SARIMAX across 40+ contract segments, validated with walk-forward testing.",
     reward: "$3.5M",
@@ -132,6 +134,7 @@ const projects = [
   {
     encounter: "EPIC / OPEN SOURCE",
     difficulty: "★★★★☆",
+    name: "Nexus",
     title: "Multi-Agent GenAI Retrieval Platform",
     client: "Independent Project",
     description: "A deterministic operational intelligence system using LangGraph, GPT-4.1, ChromaDB hybrid retrieval, structured tool use, and Pydantic validation.",
@@ -145,7 +148,8 @@ const projects = [
   {
     encounter: "RARE / PUBLISHED",
     difficulty: "★★★★☆",
-    title: "ECG Anomaly Detection",
+    name: "ECG Anomaly Detection",
+    title: "Published Research",
     client: "ICMLANT / IEEE",
     description: "A peer-reviewed interpretable autoencoder framework for anomaly detection and pattern recognition on clinical ECG signals.",
     reward: "IEEE",
@@ -736,13 +740,15 @@ export default function Home() {
                 <div className={`project-visual ${project.image ? "project-visual-image" : ""}`} aria-hidden="true">
                   <span>0{index + 1}</span>
                   {project.image ? <Image src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" /> : null}
+                  <strong className="project-visual-name">PROJECT // {project.name}</strong>
                   <i /><i /><i />
                   <b>{project.reward}</b>
                 </div>
                 <div className="project-copy">
                   <div className="project-meta"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
-                  <p>{project.client}</p>
-                  <h3>{project.title}</h3>
+                  <p className="project-client">{project.client}</p>
+                  <h3>{project.name}</h3>
+                  <p className="project-subtitle">{project.title}</p>
                   <p className="project-description">{project.description}</p>
                   <div className="project-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
                   <div className="project-footer">
@@ -753,9 +759,9 @@ export default function Home() {
               </>
             );
             return project.href ? (
-              <a className={`project-card project-${index + 1} gsap-reveal`} href={project.href} target="_blank" rel="noreferrer" key={project.title}>{content}</a>
+              <a className={`project-card project-${index + 1} gsap-reveal`} href={project.href} target="_blank" rel="noreferrer" key={project.name}>{content}</a>
             ) : (
-              <article className={`project-card project-${index + 1} gsap-reveal`} key={project.title}>{content}</article>
+              <article className={`project-card project-${index + 1} gsap-reveal`} key={project.name}>{content}</article>
             );
           })}
         </div>
