@@ -127,7 +127,7 @@ const projects = [
     stats: ["22% RMSE improvement", "18% MAPE improvement", "40+ segments"],
     tools: ["TFT", "SARIMAX", "Time Series", "Python"],
     href: null,
-    image: null,
+    image: "projects/demand-capacity-forecast.png",
   },
   {
     encounter: "EPIC / OPEN SOURCE",
@@ -140,7 +140,7 @@ const projects = [
     stats: ["Hybrid retrieval", "Structured calling", "Natural-language Q&A"],
     tools: ["LangGraph", "GPT-4.1", "ChromaDB", "Streamlit"],
     href: "https://github.com/vaasu202/Agentic-RAG-Postmortem-Reporting",
-    image: null,
+    image: "projects/multi-agent-rag.png",
   },
   {
     encounter: "RARE / PUBLISHED",
@@ -153,7 +153,7 @@ const projects = [
     stats: ["Clinical ECG", "Interpretable ML", "Anomaly detection"],
     tools: ["Autoencoders", "PyTorch", "Clinical ML"],
     href: "https://ieeexplore.ieee.org/document/10372979",
-    image: null,
+    image: "projects/ecg-anomaly-detection.png",
   },
 ];
 

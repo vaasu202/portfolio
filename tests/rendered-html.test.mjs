@@ -28,6 +28,9 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.match(html, /runtime security gateway/i);
   assert.match(html, /github\.com\/vaasu202\/agentguard/);
   assert.match(html, /projects\/agentguard-demo\.png/);
+  assert.match(html, /projects\/demand-capacity-forecast\.png/);
+  assert.match(html, /projects\/multi-agent-rag\.png/);
+  assert.match(html, /projects\/ecg-anomaly-detection\.png/);
   assert.match(html, /soheevaa@msu\.edu/);
   assert.doesNotMatch(html, /—|&mdash;|&#8212;/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|Starter Project/);
@@ -39,6 +42,9 @@ test("includes the downloadable resume and social preview", async () => {
     access(new URL("../out/og.png", import.meta.url)),
     access(new URL("../out/teddy-bear.svg", import.meta.url)),
     access(new URL("../out/projects/agentguard-demo.png", import.meta.url)),
+    access(new URL("../out/projects/demand-capacity-forecast.png", import.meta.url)),
+    access(new URL("../out/projects/multi-agent-rag.png", import.meta.url)),
+    access(new URL("../out/projects/ecg-anomaly-detection.png", import.meta.url)),
     access(new URL("../out/logos/delta-dental.jpg", import.meta.url)),
     access(new URL("../out/logos/ey.svg", import.meta.url)),
     access(new URL("../out/logos/exodrone-systems.png", import.meta.url)),
