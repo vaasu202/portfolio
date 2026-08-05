@@ -739,7 +739,12 @@ export default function Home() {
               <>
                 <div className={`project-visual ${project.image ? "project-visual-image" : ""}`} aria-hidden="true">
                   <span>0{index + 1}</span>
-                  {project.image ? <Image src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" /> : null}
+                  {project.image ? (
+                    <>
+                      <Image className="project-image-backdrop" src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" />
+                      <Image className="project-image-main" src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" />
+                    </>
+                  ) : null}
                   <strong className="project-visual-name">PROJECT // {project.name}</strong>
                   <i /><i /><i />
                   <b>{project.reward}</b>

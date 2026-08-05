@@ -640,14 +640,16 @@ a { text-decoration: none; }
 .project-visual i { position: absolute; z-index: 1; width: 16px; height: 16px; background: var(--ink); transform: rotate(45deg); }
 .project-visual i:nth-of-type(1) { left: 16%; top: 22%; }.project-visual i:nth-of-type(2) { right: 12%; bottom: 24%; }.project-visual i:nth-of-type(3) { right: 26%; top: 16%; width: 6px; height: 6px; }
 .project-visual-image { background: var(--ink); color: var(--cream); }
-.project-visual-image::before { z-index: 1; inset: 0; background: linear-gradient(180deg, rgba(18,20,15,.04) 30%, rgba(18,20,15,.92) 100%); opacity: 1; }
-.project-visual-image > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; filter: saturate(.88) contrast(1.06); transition: transform 500ms var(--ease-out), filter 220ms ease; }
-.project-visual-image > span { z-index: 2; color: var(--cream); }
-.project-visual-image > b { position: absolute; left: 24px; bottom: 30px; color: var(--signal); font-size: clamp(58px, 7vw, 112px); }
+.project-visual-image::before { z-index: 2; inset: 0; background: linear-gradient(180deg, rgba(18,20,15,.02) 42%, rgba(18,20,15,.86) 100%); opacity: 1; }
+.project-visual-image > img { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 500ms var(--ease-out), filter 220ms ease; }
+.project-image-backdrop { z-index: 0; object-fit: cover; object-position: center center; transform: scale(1.09); filter: blur(20px) brightness(.42) saturate(.72); opacity: .76; }
+.project-image-main { z-index: 1; object-fit: contain; object-position: center center; filter: saturate(.92) contrast(1.05); }
+.project-visual-image > span { z-index: 3; color: var(--cream); }
+.project-visual-image > b { position: absolute; z-index: 3; left: 24px; bottom: 30px; color: var(--signal); font-size: clamp(58px, 7vw, 112px); }
 .project-visual-image > i { display: none; }
 .project-visual-name {
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   top: 20px;
   right: 22px;
   max-width: calc(100% - 92px);
@@ -857,7 +859,8 @@ footer p { color: var(--lime); } footer button { justify-self: end; border: 0; b
   .project-card:hover { border-color: var(--lime); }
   .project-card:hover .project-visual::before { opacity: .28; transform: scale(1.08) rotate(4deg); }
   .project-card:hover .project-visual-image::before { opacity: 1; transform: none; }
-  .project-card:hover .project-visual-image > img { transform: scale(1.025); filter: saturate(1) contrast(1.08); }
+  .project-card:hover .project-image-backdrop { transform: scale(1.13); filter: blur(20px) brightness(.48) saturate(.82); }
+  .project-card:hover .project-image-main { transform: scale(1.012); filter: saturate(1) contrast(1.08); }
   .project-card:hover .project-copy h3 { color: var(--lime); transform: translateX(6px); }
   .project-card:hover .project-footer > b { color: var(--cream); transform: translateX(5px); }
   .mode-bridge > button:hover::before { transform: scaleX(1); }
