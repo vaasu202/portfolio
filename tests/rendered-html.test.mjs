@@ -7,6 +7,9 @@ test("exports the complete portfolio as static HTML", async () => {
 
   assert.match(html, /Vaasu Sohee/);
   assert.match(html, /Portfolio Campaign/);
+  assert.match(html, /ORBITAL BOOT/);
+  assert.match(html, /LOADING PORTFOLIO/);
+  assert.doesNotMatch(html, /LOAD PLAYER/);
   assert.match(html, /START CAMPAIGN/);
   assert.match(html, /Portfolio world map/);
   assert.match(html, /CAREER CAMPAIGN/);

@@ -258,12 +258,40 @@ export default function Home() {
     if (reduceMotion) {
       gsap.set(".boot-screen", { display: "none" });
     } else {
+      const bootProgressLabel = root.current?.querySelector<HTMLElement>(".boot-progress-value");
+      const progressState = { value: 0 };
+      const orbitTweens = [
+        gsap.to(".boot-orbit-spin-a", { rotation: 360, duration: 12, repeat: -1, ease: "none" }),
+        gsap.to(".boot-orbit-spin-b", { rotation: -360, duration: 9, repeat: -1, ease: "none" }),
+        gsap.to(".boot-orbit-spin-c", { rotation: 360, duration: 15, repeat: -1, ease: "none" }),
+        gsap.to(".boot-planet-grid", { rotation: 352, duration: 18, repeat: -1, ease: "none" }),
+      ];
+
       gsap.timeline({ defaults: { ease: "power3.out" } })
-        .from(".boot-mark", { autoAlpha: 0, scale: 0.96, duration: 0.34 })
-        .from(".boot-copy > *", { autoAlpha: 0, y: 10, stagger: 0.06, duration: 0.28 }, "<0.04")
-        .to(".boot-progress span", { scaleX: 1, duration: 0.48, ease: "power2.inOut" }, 0.16)
-        .to(".boot-screen", { yPercent: -100, duration: 0.52, ease: "power3.inOut" }, "+=0.04")
-        .set(".boot-screen", { display: "none" });
+        .addLabel("powerOn", 0)
+        .from(".boot-grid", { autoAlpha: 0, duration: 0.32 }, "powerOn")
+        .from(".boot-title, .boot-system", { autoAlpha: 0, y: 12, duration: 0.42, stagger: 0.07 }, "powerOn+=0.05")
+        .from(".boot-planet", { autoAlpha: 0, scale: 0.76, rotation: -12, duration: 0.92 }, "powerOn+=0.08")
+        .from(".boot-orbit-shell", { autoAlpha: 0, scaleX: 0.42, duration: 0.78, stagger: 0.09 }, "powerOn+=0.2")
+        .from(".boot-node", { autoAlpha: 0, scale: 0.35, duration: 0.38, stagger: 0.045 }, "powerOn+=0.4")
+        .from(".boot-identity > *, .boot-progress-copy", { autoAlpha: 0, y: 14, duration: 0.48, stagger: 0.06 }, "powerOn+=0.52")
+        .from(".boot-corner", { autoAlpha: 0, scale: 0.7, duration: 0.36, stagger: 0.04 }, "powerOn+=0.35")
+        .to(".boot-progress span", { scaleX: 1, duration: 1.38, ease: "power2.inOut" }, "powerOn+=0.28")
+        .to(progressState, {
+          value: 100,
+          duration: 1.38,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            if (bootProgressLabel) bootProgressLabel.textContent = `${String(Math.round(progressState.value)).padStart(2, "0")}%`;
+          },
+        }, "powerOn+=0.28")
+        .addLabel("ready", 1.72)
+        .to(".boot-stage", { scale: 0.985, duration: 0.2, ease: "power2.inOut" }, "ready")
+        .to(".boot-screen", { yPercent: -100, duration: 0.58, ease: "power3.inOut" }, "ready+=0.14")
+        .set(".boot-screen", { display: "none" })
+        .call(() => {
+          orbitTweens.forEach((tween) => tween.kill());
+        });
     }
 
     ScrollTrigger.create({
@@ -306,6 +334,7 @@ export default function Home() {
         }
 
         const intro = gsap.timeline({
+          delay: reduceMotion ? 0 : 2.08,
           defaults: { duration: 0.58, ease: "power3.out" },
         });
         intro
@@ -498,13 +527,68 @@ export default function Home() {
   return (
     <main ref={root} className={`portfolio-shell ${scanMode ? "scan-active" : ""}`}>
       <div className="boot-screen" aria-hidden="true">
-        <div className="boot-mark">VS</div>
-        <div className="boot-copy">
-          <p>VAASU SOHEE</p>
-          <span>PORTFOLIO CAMPAIGN // 2026</span>
+        <div className="boot-grid" />
+
+        <div className="boot-title">
+          <b>01</b>
+          <span>ORBITAL BOOT</span>
         </div>
-        <div className="boot-progress"><span /></div>
-        <small>LOAD PLAYER</small>
+
+        <div className="boot-system">
+          <span>SYSTEM INIT <i /></span>
+          <span>ORBITAL LINK <i /></span>
+          <span>CALIBRATING <i /></span>
+        </div>
+
+        <div className="boot-stage">
+          <span className="boot-axis boot-axis-x" />
+          <span className="boot-axis boot-axis-y" />
+
+          <div className="boot-orbit-spin boot-orbit-spin-a">
+            <div className="boot-orbit-tilt boot-orbit-tilt-a">
+              <span className="boot-orbit-shell" />
+              <i className="boot-node boot-node-lime" />
+              <i className="boot-node boot-node-cream" />
+            </div>
+          </div>
+          <div className="boot-orbit-spin boot-orbit-spin-b">
+            <div className="boot-orbit-tilt boot-orbit-tilt-b">
+              <span className="boot-orbit-shell" />
+              <i className="boot-node boot-node-orange" />
+              <i className="boot-node boot-node-cream" />
+            </div>
+          </div>
+          <div className="boot-orbit-spin boot-orbit-spin-c">
+            <div className="boot-orbit-tilt boot-orbit-tilt-c">
+              <span className="boot-orbit-shell" />
+              <i className="boot-node boot-node-lime" />
+              <i className="boot-node boot-node-cream" />
+            </div>
+          </div>
+
+          <div className="boot-planet">
+            <span className="boot-planet-grid" />
+          </div>
+        </div>
+
+        <div className="boot-footer">
+          <div className="boot-identity">
+            <strong>VAASU</strong>
+            <strong>SOHEE</strong>
+          </div>
+          <div className="boot-progress-wrap">
+            <div className="boot-progress-copy">
+              <span>LOADING PORTFOLIO</span>
+              <b className="boot-progress-value">00%</b>
+            </div>
+            <div className="boot-progress"><span /></div>
+          </div>
+        </div>
+
+        <span className="boot-corner boot-corner-tl" />
+        <span className="boot-corner boot-corner-tr" />
+        <span className="boot-corner boot-corner-bl" />
+        <span className="boot-corner boot-corner-br" />
       </div>
 
       <header className="race-nav">
