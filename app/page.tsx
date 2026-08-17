@@ -173,7 +173,7 @@ const achievements = [
   { code: "DATA_ARCHITECT", value: "131", label: "datasets governed" },
   { code: "SPEED_RUNNER", value: "80%+", label: "latency eliminated" },
   { code: "RISK_BREAKER", value: "$3.5M", label: "annual risk reduced" },
-  { code: "PERFECT_RUN", value: "4.0", label: "graduate GPA" },
+  { code: "PERFECT_RUN", value: "3.92", label: "graduate GPA" },
 ];
 
 const proofMoments = [
@@ -210,7 +210,7 @@ const proofMoments = [
   {
     step: "04",
     code: "PERFECT_RUN",
-    value: "4.0",
+    value: "3.92",
     unit: "GRADUATE GPA",
     title: "Rigor behind the build.",
     copy: "Graduate work in data science reinforced the mathematical depth behind every model, experiment, and system decision.",
@@ -760,7 +760,7 @@ export default function Home() {
           <article className="degree-card degree-primary gsap-reveal">
             <div className="degree-mark">MSU</div>
             <div><span>LEGENDARY CREDENTIAL</span><small>Michigan State University</small><h3>M.S. Data Science</h3><p>Machine Learning · Natural Language Processing · Foundations of LLMs · Probability & Statistics · Computational Optimization · Data Mining</p></div>
-            <strong>4.0<small>/ 4.0 GPA</small></strong>
+            <strong>3.92<small>/ 4.0 GPA</small></strong>
           </article>
           <article className="degree-card gsap-reveal">
             <div className="degree-mark">NU</div>

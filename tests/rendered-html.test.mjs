@@ -36,6 +36,8 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.match(html, /ECG Anomaly Detection/);
   assert.match(html, /Published Research/);
   assert.match(html, /runtime security gateway/i);
+  assert.match(html, /3\.92/);
+  assert.doesNotMatch(html, />4\.0</);
   assert.match(html, /github\.com\/vaasu202\/agentguard/);
   assert.match(html, /projects\/agentguard-demo\.png/);
   assert.match(html, /projects\/demand-capacity-forecast\.png/);
