@@ -18,7 +18,8 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.match(html, /Ship/i);
   assert.match(html, /measurable impact\./i);
   assert.match(html, /IMPACT SYSTEM/);
-  assert.match(html, /Scroll through the proof/);
+  assert.match(html, /Impact at a glance/);
+  assert.doesNotMatch(html, /Scroll through the proof/);
   assert.doesNotMatch(html, /VERTICAL INPUT|SCROLL TO TRAVERSE|encounter-viewport/);
   assert.match(html, /Delta Dental Insurance/);
   assert.match(html, /Ernst &amp; Young/);

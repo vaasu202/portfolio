@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollTrigger);
+  gsap.registerPlugin(useGSAP);
 }
 
 const zones = [
@@ -250,10 +249,58 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [jumpTo]);
 
-  useGSAP(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
     const progressFill = root.current?.querySelector<HTMLElement>(".page-progress-fill");
     const progressLabel = root.current?.querySelector<HTMLElement>(".page-progress-label");
+    let frameId: number | null = null;
+
+    const updateScrollUi = () => {
+      frameId = null;
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const progress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+
+      if (progressFill) progressFill.style.transform = `scaleX(${progress})`;
+      if (progressLabel) progressLabel.textContent = `${Math.round(progress * 100)}%`;
+
+      const viewportCenter = window.innerHeight * 0.5;
+      let closestZone = zones[0].id;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      zones.forEach((zone) => {
+        const section = document.getElementById(zone.id);
+        if (!section) return;
+        const bounds = section.getBoundingClientRect();
+        if (bounds.top <= viewportCenter && bounds.bottom >= viewportCenter) {
+          closestZone = zone.id;
+          closestDistance = 0;
+          return;
+        }
+        const distance = Math.min(Math.abs(bounds.top - viewportCenter), Math.abs(bounds.bottom - viewportCenter));
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestZone = zone.id;
+        }
+      });
+
+      setActiveZone((current) => current === closestZone ? current : closestZone);
+    };
+
+    const requestUpdate = () => {
+      if (frameId === null) frameId = window.requestAnimationFrame(updateScrollUi);
+    };
+
+    updateScrollUi();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  useGSAP(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduceMotion) {
       gsap.set(".boot-screen", { display: "none" });
@@ -294,44 +341,19 @@ export default function Home() {
         });
     }
 
-    ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => {
-        if (progressFill) gsap.set(progressFill, { scaleX: self.progress });
-        if (progressLabel) progressLabel.textContent = `${Math.round(self.progress * 100)}%`;
-      },
-    });
-
-    zones.forEach((zone) => {
-      ScrollTrigger.create({
-        trigger: `#${zone.id}`,
-        start: "top 52%",
-        end: "bottom 48%",
-        onToggle: (self) => {
-          if (self.isActive) setActiveZone(zone.id);
-        },
-      });
-    });
-
     const mm = gsap.matchMedia();
     mm.add(
       {
-        desktop: "(min-width: 900px)",
         finePointer: "(hover: hover) and (pointer: fine)",
         reduceMotion: "(prefers-reduced-motion: reduce)",
       },
       (context) => {
-        const { desktop, finePointer, reduceMotion: shouldReduce } = context.conditions as {
-          desktop: boolean;
+        const { finePointer, reduceMotion: shouldReduce } = context.conditions as {
           finePointer: boolean;
           reduceMotion: boolean;
         };
 
-        if (shouldReduce) {
-          gsap.set(".gsap-reveal, .manifesto-line, .manifesto-word, .hero-message, .proof-slide, .proof-field, .proof-machine", { clearProps: "all" });
-          return;
-        }
+        if (shouldReduce) return;
 
         const intro = gsap.timeline({
           delay: reduceMotion ? 0 : 2.08,
@@ -343,112 +365,6 @@ export default function Home() {
           .from(".hero-name", { autoAlpha: 0, y: 24 }, "<0.05")
           .from(".player-core", { autoAlpha: 0 }, "<0.12")
           .from(".hero-meta > *, .hero-actions > *, .hero-scroll > *", { autoAlpha: 0, y: 12, stagger: 0.05 }, "<0.18");
-
-        if (desktop) {
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: ".hero-scene",
-              start: "top top",
-              end: "+=85%",
-              pin: true,
-              scrub: 0.25,
-              anticipatePin: 1,
-            },
-          })
-            .to(".hero-name span", { autoAlpha: 0, y: -18, stagger: 0.025, ease: "power2.inOut" }, 0)
-            .to(".hero-meta, .hero-actions, .hero-scroll", { autoAlpha: 0, y: 16, ease: "power2.inOut" }, 0)
-            .to(".player-core", { scale: 1.12, rotation: 3, ease: "power2.inOut" }, 0)
-            .to(".hero-light-layer", { autoAlpha: 0, ease: "power2.inOut" }, 0.2)
-            .fromTo(".hero-message", { autoAlpha: 0 }, { autoAlpha: 1, ease: "power2.inOut" }, 0.24)
-            .from(".hero-marquee", { autoAlpha: 0, y: 24, stagger: 0.06, ease: "power2.out" }, 0.32)
-            .fromTo(".hero-signature", { autoAlpha: 0, scale: 0.94, rotation: -4 }, { autoAlpha: 0.7, scale: 1, rotation: -2, ease: "power2.out" }, 0.38);
-        }
-
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: ".manifesto-zone h2",
-            start: "top 80%",
-            once: true,
-          },
-          defaults: { ease: "power3.out" },
-        })
-          .from(".manifesto-word", {
-            autoAlpha: 0.12,
-            yPercent: 24,
-            stagger: 0.035,
-            duration: 0.56,
-          })
-          .from(".manifesto-zone > p", { autoAlpha: 0, y: 20, duration: 0.46 }, "-=0.26");
-
-        if (desktop) {
-          const proofSlides = gsap.utils.toArray<HTMLElement>(".proof-slide");
-          const proofSteps = gsap.utils.toArray<HTMLElement>(".proof-step");
-          gsap.set(proofSlides.slice(1), { autoAlpha: 0, y: 24 });
-          gsap.set(proofSteps, { opacity: 0.3 });
-          gsap.set(proofSteps[0], { opacity: 1 });
-
-          const proofTimeline = gsap.timeline({
-            scrollTrigger: {
-              trigger: ".proof-scene",
-              start: "top top",
-              end: `+=${(proofMoments.length - 1) * 72}%`,
-              pin: true,
-              scrub: 0.25,
-              anticipatePin: 1,
-            },
-          });
-
-          proofTimeline.to(".proof-machine", { rotation: 5, duration: 0.32, ease: "power2.inOut" });
-          proofMoments.slice(1).forEach((_, index) => {
-            const next = index + 1;
-            proofTimeline
-              .to(proofSlides[index], { autoAlpha: 0, y: -20, duration: 0.28, ease: "power2.inOut" })
-              .fromTo(proofSlides[next], { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.34, ease: "power2.out" }, "<0.06")
-              .to(".proof-machine", {
-                rotation: next % 2 ? -8 : 8,
-                duration: 0.34,
-                ease: "power2.inOut",
-              }, "<")
-              .to(proofSteps[index], { opacity: 0.3, duration: 0.18 }, "<")
-              .to(proofSteps[next], { opacity: 1, duration: 0.18 }, "<")
-              .to({}, { duration: 0.28 });
-          });
-        }
-
-        gsap.set(".gsap-reveal", { autoAlpha: 0, y: 22 });
-        ScrollTrigger.batch(".gsap-reveal", {
-          start: "top 90%",
-          once: true,
-          interval: 0.08,
-          batchMax: 4,
-          onEnter: (elements) => {
-            gsap.to(elements, {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.5,
-              stagger: 0.06,
-              ease: "power3.out",
-              overwrite: true,
-            });
-          },
-        });
-
-        if (desktop) {
-          gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
-            const visual = card.querySelector(".project-visual");
-            if (!visual) return;
-            gsap.fromTo(visual, { yPercent: -3 }, {
-              yPercent: 3,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.2,
-              },
-            });
-          });
-        }
 
         gsap.to(".ticker-track", {
           xPercent: -50,
@@ -513,13 +429,7 @@ export default function Home() {
       },
     );
 
-    let mounted = true;
-    document.fonts.ready.then(() => {
-      if (mounted) ScrollTrigger.refresh();
-    });
-
     return () => {
-      mounted = false;
       mm.revert();
     };
   }, { scope: root });
@@ -680,13 +590,6 @@ export default function Home() {
             <div className="hero-scroll"><span>SCROLL TO LOAD</span><i /></div>
           </div>
 
-          <div className="hero-message" aria-hidden="true">
-            <span className="message-label">PLAYER MANIFESTO // 001</span>
-            <div className="hero-marquee marquee-a">BUILD SYSTEMS THAT MATTER</div>
-            <div className="hero-marquee marquee-b">SHIP MEASURABLE IMPACT</div>
-            <div className="hero-signature">VS</div>
-            <p>MODELS · INFRASTRUCTURE · DECISIONS</p>
-          </div>
         </div>
       </section>
 
@@ -726,51 +629,24 @@ export default function Home() {
       </section>
 
       <section className="proof-scene" aria-labelledby="proof-title">
-        <div className="proof-pin">
-          <div className="proof-fields" aria-hidden="true">
-            {proofMoments.map((moment) => <span className={`proof-field proof-field-${moment.tone}`} key={moment.code} />)}
-          </div>
+        <div className="proof-shell">
           <ContourMap />
           <header className="proof-head">
             <div><span>IMPACT SYSTEM</span><b>VERIFIED OUTPUT</b></div>
-            <p id="proof-title">Scroll through the proof</p>
+            <p id="proof-title">Impact at a glance</p>
           </header>
-
-          <div className="proof-stage">
-            <div className="proof-machine" aria-hidden="true">
-              <span className="machine-ring ring-outer" />
-              <span className="machine-ring ring-inner" />
-              <span className="machine-axis axis-horizontal" />
-              <span className="machine-axis axis-vertical" />
-              <i>VS</i>
-              <b>IMPACT</b>
-            </div>
-
-            <div className="proof-slides">
-              {proofMoments.map((moment) => (
-                <article className={`proof-slide proof-slide-${moment.tone}`} key={moment.code}>
-                  <div className="proof-score">
-                    <span>{moment.code}</span>
-                    <strong>{moment.value}</strong>
-                    <small>{moment.unit}</small>
-                  </div>
-                  <div className="proof-copy">
-                    <span>PROOF LOG // {moment.step}</span>
-                    <h2>{moment.title}</h2>
-                    <p>{moment.copy}</p>
-                    <div>{moment.signals.map((signal) => <b key={signal}>{signal}</b>)}</div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="proof-steps" aria-hidden="true">
+          <div className="proof-grid">
             {proofMoments.map((moment) => (
-              <div className="proof-step" key={moment.code}><span>{moment.step}</span><i /><b>{moment.code}</b></div>
+              <article className={`proof-card proof-card-${moment.tone}`} key={moment.code}>
+                <div className="proof-card-meta"><span>{moment.step}</span><b>{moment.code}</b></div>
+                <strong>{moment.value}</strong>
+                <small>{moment.unit}</small>
+                <h2>{moment.title}</h2>
+                <p>{moment.copy}</p>
+                <div className="proof-signals">{moment.signals.map((signal) => <b key={signal}>{signal}</b>)}</div>
+              </article>
             ))}
           </div>
-          <p className="proof-hint">KEEP SCROLLING <span>↓</span></p>
         </div>
       </section>
 
