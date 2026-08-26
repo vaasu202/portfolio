@@ -46,7 +46,7 @@ test("exports the complete portfolio as static HTML", async () => {
   assert.equal((html.match(/project-image-main/g) ?? []).length, 4);
   assert.equal((html.match(/project-image-backdrop/g) ?? []).length, 4);
   assert.match(html, /soheevaa@msu\.edu/);
-  assert.match(html, /resume\.pdf\?v=dc5e4334/);
+  assert.match(html, /resume\.pdf\?v=e74aa31d/);
   assert.doesNotMatch(html, /—|&mdash;|&#8212;/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|Starter Project/);
 });

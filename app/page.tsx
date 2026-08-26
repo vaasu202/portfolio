@@ -507,7 +507,7 @@ export default function Home() {
         </a>
         <span className="nav-glyph" aria-hidden="true">VS</span>
         <div className="nav-actions">
-          <a className="nav-chip nav-resume" href="resume.pdf?v=dc5e4334" target="_blank"><span>RESUME ↗</span></a>
+          <a className="nav-chip nav-resume" href="resume.pdf?v=e74aa31d" target="_blank"><span>RESUME ↗</span></a>
           <button className="nav-chip scan-trigger" type="button" aria-pressed={scanMode} onClick={() => setScanMode((value) => !value)}>
             <span>{scanMode ? "SCAN ON" : "SCAN"}</span>
           </button>
