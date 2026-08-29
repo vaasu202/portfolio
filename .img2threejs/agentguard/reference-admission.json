@@ -1,0 +1,15 @@
+{
+  "admitted": true,
+  "reasons": [],
+  "provenance": {
+    "viewpoint": "brand-ui",
+    "sourcePath": "public/projects/agentguard-demo.png",
+    "width": 1264,
+    "height": 2211,
+    "foregroundCoverage": 0.6802,
+    "largestComponentFraction": 0.9982,
+    "pHash": "18209355978257792228",
+    "duplicateOfHash": null
+  },
+  "scope": "Brand and interaction evidence only; not literal geometry ground truth."
+}

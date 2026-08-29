@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Image from "next/image";
+import { ElectricMouseProjectMascot } from "@/app/components/ElectricMouseProjectMascot";
+import { ProjectSystemModel, type ProjectSystemVariant } from "@/app/components/ProjectSystemModel";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -19,7 +21,7 @@ const zones = [
 
 const experiences = [
   {
-    code: "ACTIVE_05",
+    code: "CURRENT ROLE",
     status: "IN PROGRESS",
     role: "Data Scientist Intern (Co-op)",
     company: "Delta Dental Insurance",
@@ -39,7 +41,7 @@ const experiences = [
     tags: ["GenAI", "Dataiku", "Snowflake", "Azure OpenAI", "PyTorch", "MLflow"],
   },
   {
-    code: "MISSION_04",
+    code: "ROLE 04",
     status: "COMPLETE",
     role: "Data Scientist",
     company: "Ernst & Young (EY)",
@@ -58,7 +60,7 @@ const experiences = [
     tags: ["AWS", "SageMaker", "Airflow", "FastAPI", "Causal ML", "Docker"],
   },
   {
-    code: "MISSION_03",
+    code: "ROLE 03",
     status: "COMPLETE",
     role: "Data Science Intern",
     company: "Ernst & Young (EY)",
@@ -72,7 +74,7 @@ const experiences = [
     tags: ["Experimentation", "Regression", "Uplift Modeling"],
   },
   {
-    code: "MISSION_02",
+    code: "ROLE 02",
     status: "COMPLETE",
     role: "Software Engineering Intern",
     company: "Exodrone Systems",
@@ -86,7 +88,7 @@ const experiences = [
     tags: ["C#", ".NET", "REST APIs"],
   },
   {
-    code: "MISSION_01",
+    code: "ROLE 01",
     status: "COMPLETE",
     role: "Data Science Intern",
     company: "NIIT Technologies",
@@ -103,83 +105,72 @@ const experiences = [
 
 const projects = [
   {
-    encounter: "LEGENDARY / OPEN SOURCE",
-    difficulty: "★★★★★",
+    id: "agentguard",
+    artifact: "guard" as ProjectSystemVariant,
     name: "AgentGuard",
-    title: "Security Gateway for AI Agents",
-    client: "Independent Project",
-    description: "A runtime security gateway for AI agents that intercepts MCP tool calls, enforces deterministic policy, redacts secrets, pauses risky actions for human approval, and writes a tamper-evident audit trail.",
-    reward: "BLOCK",
-    rewardLabel: "unsafe tool execution",
+    title: "Security gateway for AI agents",
+    description: "A runtime security layer that intercepts MCP tool calls, enforces deterministic policy, redacts secrets, pauses risky actions for human approval, and writes a tamper-evident audit trail.",
+    outcome: "Unsafe tool execution blocked before it reaches production systems.",
     stats: ["4 attack fixtures", "4 agent runtimes", "Tamper-evident audit"],
-    tools: ["MCP", "OpenAI Agents", "LangGraph", "Mastra", "PydanticAI", "Qdrant"],
+    tools: ["MCP", "OpenAI Agents", "LangGraph", "PydanticAI", "Qdrant"],
     href: "https://github.com/vaasu202/agentguard",
     image: "projects/agentguard-demo.png",
+    imageAlt: "AgentGuard security gateway interface",
   },
   {
-    encounter: "LEGENDARY / NDA",
-    difficulty: "★★★★★",
+    id: "longview",
+    artifact: "forecast" as ProjectSystemVariant,
     name: "Longview",
-    title: "Demand & Capacity Forecasting Capstone",
-    client: "Jackson National Life",
-    description: "A multi-segment forecasting system combining Temporal Fusion Transformer and SARIMAX across 40+ contract segments, validated with walk-forward testing.",
-    reward: "$3.5M",
-    rewardLabel: "annual risk reduction",
+    title: "Demand and capacity forecasting",
+    description: "A multi-segment forecasting system combining Temporal Fusion Transformer and SARIMAX across more than 40 contract segments, validated with walk-forward testing.",
+    outcome: "$3.5M in annual risk reduction.",
     stats: ["22% RMSE improvement", "18% MAPE improvement", "40+ segments"],
-    tools: ["TFT", "SARIMAX", "Time Series", "Python"],
+    tools: ["TFT", "SARIMAX", "Time series", "Python"],
     href: null,
     image: "projects/demand-capacity-forecast.png",
+    imageAlt: "Demand and capacity forecast visualization",
   },
   {
-    encounter: "EPIC / OPEN SOURCE",
-    difficulty: "★★★★☆",
+    id: "nexus",
+    artifact: "agents" as ProjectSystemVariant,
     name: "Nexus",
-    title: "Multi-Agent GenAI Retrieval Platform",
-    client: "Independent Project",
+    title: "Multi-agent retrieval platform",
     description: "A deterministic operational intelligence system using LangGraph, GPT-4.1, ChromaDB hybrid retrieval, structured tool use, and Pydantic validation.",
-    reward: "RAG",
-    rewardLabel: "grounded agentic outputs",
+    outcome: "Grounded answers from complex operational knowledge.",
     stats: ["Hybrid retrieval", "Structured calling", "Natural-language Q&A"],
     tools: ["LangGraph", "GPT-4.1", "ChromaDB", "Streamlit"],
     href: "https://github.com/vaasu202/Agentic-RAG-Postmortem-Reporting",
     image: "projects/multi-agent-rag.png",
+    imageAlt: "Nexus multi-agent retrieval application",
   },
   {
-    encounter: "RARE / PUBLISHED",
-    difficulty: "★★★★☆",
+    id: "ecg-anomaly-detection",
+    artifact: "ecg" as ProjectSystemVariant,
     name: "ECG Anomaly Detection",
-    title: "Published Research",
-    client: "ICMLANT / IEEE",
+    title: "Published clinical ML research",
     description: "A peer-reviewed interpretable autoencoder framework for anomaly detection and pattern recognition on clinical ECG signals.",
-    reward: "IEEE",
-    rewardLabel: "peer-reviewed research",
-    stats: ["Clinical ECG", "Interpretable ML", "Anomaly detection"],
+    outcome: "Clinical signals translated into interpretable anomaly patterns.",
+    stats: ["Peer reviewed", "Clinical ECG", "Interpretable ML"],
     tools: ["Autoencoders", "PyTorch", "Clinical ML"],
     href: "https://ieeexplore.ieee.org/document/10372979",
     image: "projects/ecg-anomaly-detection.png",
+    imageAlt: "ECG anomaly detection research visualization",
   },
 ];
 
 const skillGroups = [
-  { icon: "01", label: "Cloud Infrastructure", level: 88, skills: ["AWS S3", "SageMaker", "Athena", "Bedrock", "Snowflake", "Docker", "Kubernetes"] },
-  { icon: "02", label: "Data Engineering", level: 92, skills: ["ETL / ELT", "Airflow", "Spark", "Dataiku", "Oracle SQL", "PostgreSQL", "Optimization"] },
-  { icon: "03", label: "ML Systems", level: 94, skills: ["PyTorch Lightning", "Transformers", "MLflow", "FastAPI", "Optuna", "CI/CD"] },
-  { icon: "04", label: "GenAI Systems", level: 91, skills: ["LangGraph", "LangChain", "RAG", "Prompt Engineering", "Pydantic", "Azure OpenAI"] },
-  { icon: "05", label: "Evaluation", level: 86, skills: ["LLM-as-a-Judge", "Ragas", "LangSmith", "TruLens", "MLflow Evaluate", "Observability"] },
-  { icon: "06", label: "Decision Science", level: 89, skills: ["Forecasting", "A/B Testing", "Uplift Modeling", "Causal Inference", "Predictive Analytics"] },
-];
-
-const achievements = [
-  { code: "DATA_ARCHITECT", value: "131", label: "datasets governed" },
-  { code: "SPEED_RUNNER", value: "80%+", label: "latency eliminated" },
-  { code: "RISK_BREAKER", value: "$3.5M", label: "annual risk reduced" },
-  { code: "PERFECT_RUN", value: "3.92", label: "graduate GPA" },
+  { icon: "01", label: "Cloud Infrastructure", focus: "Cloud and deployment", skills: ["AWS S3", "SageMaker", "Athena", "Bedrock", "Snowflake", "Docker", "Kubernetes"] },
+  { icon: "02", label: "Data Engineering", focus: "Pipelines and platforms", skills: ["ETL / ELT", "Airflow", "Spark", "Dataiku", "Oracle SQL", "PostgreSQL", "Optimization"] },
+  { icon: "03", label: "ML Systems", focus: "Training and serving", skills: ["PyTorch Lightning", "Transformers", "MLflow", "FastAPI", "Optuna", "CI/CD"] },
+  { icon: "04", label: "GenAI Systems", focus: "Agents and retrieval", skills: ["LangGraph", "LangChain", "RAG", "Prompt Engineering", "Pydantic", "Azure OpenAI"] },
+  { icon: "05", label: "Evaluation", focus: "Quality and observability", skills: ["LLM-as-a-Judge", "Ragas", "LangSmith", "TruLens", "MLflow Evaluate", "Observability"] },
+  { icon: "06", label: "Decision Science", focus: "Forecasting and experimentation", skills: ["Forecasting", "A/B Testing", "Uplift Modeling", "Causal Inference", "Predictive Analytics"] },
 ];
 
 const proofMoments = [
   {
     step: "01",
-    code: "DATA_ARCHITECT",
+    code: "DATA GOVERNANCE",
     value: "131",
     unit: "DATASETS GOVERNED",
     title: "One question. One trusted answer.",
@@ -189,7 +180,7 @@ const proofMoments = [
   },
   {
     step: "02",
-    code: "SPEED_RUNNER",
+    code: "PRODUCTION SPEED",
     value: "80%+",
     unit: "LATENCY REMOVED",
     title: "From waiting to working.",
@@ -199,7 +190,7 @@ const proofMoments = [
   },
   {
     step: "03",
-    code: "RISK_BREAKER",
+    code: "FORECAST IMPACT",
     value: "$3.5M",
     unit: "ANNUAL RISK REDUCED",
     title: "Forecasting with consequences.",
@@ -209,7 +200,7 @@ const proofMoments = [
   },
   {
     step: "04",
-    code: "PERFECT_RUN",
+    code: "GRADUATE GPA",
     value: "3.92",
     unit: "GRADUATE GPA",
     title: "Rigor behind the build.",
@@ -219,6 +210,49 @@ const proofMoments = [
   },
 ];
 
+
+function ArrowIcon() {
+  return <span aria-hidden="true">↗</span>;
+}
+
+function ShowcaseProject({ project }: { project: (typeof projects)[number] }) {
+  return (
+    <article className="showcase-project-card gsap-reveal" id={project.id}>
+      <div className="showcase-project-image">
+        <Image src={project.image} alt={project.imageAlt} fill sizes="(max-width: 760px) 100vw, 70vw" />
+      </div>
+      <div className="showcase-project-copy">
+        <div className="showcase-project-heading">
+          <div>
+            <span className="showcase-project-name">{project.name}</span>
+            {project.href ? (
+              <a className="showcase-project-title-link" href={project.href} target="_blank" rel="noreferrer">
+                <h3>{project.title}</h3>
+                <ArrowIcon />
+              </a>
+            ) : (
+              <>
+                <h3>{project.title}</h3>
+                <span className="showcase-private-label">Private work</span>
+              </>
+            )}
+          </div>
+          <div className="showcase-project-artifact">
+            <ProjectSystemModel variant={project.artifact} />
+          </div>
+        </div>
+        <p>{project.description}</p>
+        <strong className="showcase-project-outcome">{project.outcome}</strong>
+        <div className="showcase-project-stats" aria-label="Project highlights">
+          {project.stats.map((stat) => <span key={stat}>{stat}</span>)}
+        </div>
+        <div className="showcase-tag-list">
+          {project.tools.map((tool) => <span key={tool}>{tool}</span>)}
+        </div>
+      </div>
+    </article>
+  );
+}
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [activeZone, setActiveZone] = useState("command");
@@ -365,13 +399,6 @@ export default function Home() {
           .from(".hero-name", { autoAlpha: 0, y: 24 }, "<0.05")
           .from(".player-core", { autoAlpha: 0 }, "<0.12")
           .from(".hero-meta > *, .hero-actions > *, .hero-scroll > *", { autoAlpha: 0, y: 12, stagger: 0.05 }, "<0.18");
-
-        gsap.to(".ticker-track", {
-          xPercent: -50,
-          duration: 32,
-          repeat: -1,
-          ease: "none",
-        });
 
         if (finePointer) {
           const xTo = gsap.quickTo(".player-core", "x", { duration: 0.35, ease: "power3.out" });
@@ -593,16 +620,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="metric-ticker" aria-label="Career highlights">
-        <div className="ticker-track">
-          {[...achievements, ...achievements].map((item, index) => (
-            <div className="ticker-item" key={`${item.code}-${index}`}>
-              <small>{item.code}</small><strong>{item.value}</strong><span>{item.label}</span><i>◆</i>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="manifesto-zone" aria-labelledby="manifesto-title">
         <ContourMap />
         <div className="manifesto-top"><span>PLAYER MANIFESTO // 001</span><b>BUILT FOR PRODUCTION</b></div>
@@ -651,11 +668,11 @@ export default function Home() {
       </section>
 
       <section className="content-zone missions-zone" id="missions">
-        <ZoneIntro number="02" eyebrow="CAREER CAMPAIGN" title="Five missions. One evolving build." copy="Healthcare, consulting, aerospace, and enterprise data. Each role added a new system layer." />
+        <ZoneIntro number="02" eyebrow="CAREER EXPERIENCE" title="Five roles. One expanding practice." copy="Healthcare, consulting, aerospace, and enterprise data. Each role added a new system layer." />
 
         <article className="featured-mission gsap-reveal">
           <div>
-            <span className="status-light" /> ACTIVE MISSION
+            <span className="status-light" /> CURRENT ROLE
             <h3>Reliable AI for healthcare decisions.</h3>
           </div>
           <p>Governed analytics and ML systems where accuracy, latency, traceability, and operational resilience all matter.</p>
@@ -691,44 +708,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="content-zone projects-zone" id="projects">
-        <ZoneIntro number="03" eyebrow="BOSS ENCOUNTERS" title="Selected work. Real stakes." copy="Four challenges where modeling quality, systems thinking, security, and business translation had to work together." />
-        <div className="project-stack">
-          {projects.map((project, index) => {
-            const content = (
-              <>
-                <div className={`project-visual ${project.image ? "project-visual-image" : ""}`} aria-hidden="true">
-                  <span>0{index + 1}</span>
-                  {project.image ? (
-                    <>
-                      <Image className="project-image-backdrop" src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" />
-                      <Image className="project-image-main" src={project.image} alt="" fill sizes="(max-width: 899px) 100vw, 40vw" />
-                    </>
-                  ) : null}
-                  <strong className="project-visual-name">PROJECT // {project.name}</strong>
-                  <i /><i /><i />
-                  <b>{project.reward}</b>
-                </div>
-                <div className="project-copy">
-                  <div className="project-meta"><span>{project.encounter}</span><b>{project.difficulty}</b></div>
-                  <p className="project-client">{project.client}</p>
-                  <h3>{project.name}</h3>
-                  <p className="project-subtitle">{project.title}</p>
-                  <p className="project-description">{project.description}</p>
-                  <div className="project-stats">{project.stats.map((stat) => <span key={stat}>◆ {stat}</span>)}</div>
-                  <div className="project-footer">
-                    <div>{project.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
-                    <b>{project.href ? "OPEN MISSION ↗" : "INTEL CLASSIFIED"}</b>
-                  </div>
-                </div>
-              </>
-            );
-            return project.href ? (
-              <a className={`project-card project-${index + 1} gsap-reveal`} href={project.href} target="_blank" rel="noreferrer" key={project.name}>{content}</a>
-            ) : (
-              <article className={`project-card project-${index + 1} gsap-reveal`} key={project.name}>{content}</article>
-            );
-          })}
+      <section className="content-zone projects-zone projects-showcase" id="projects">
+        <div className="showcase-projects-intro gsap-reveal">
+          <ZoneIntro number="03" eyebrow="SELECTED PROJECTS" title="Selected work. Real stakes." copy="Security, forecasting, retrieval, and clinical ML systems built for measurable outcomes." />
+          <ElectricMouseProjectMascot />
+        </div>
+        <div className="showcase-project-grid">
+          {projects.map((project) => <ShowcaseProject project={project} key={project.name} />)}
         </div>
       </section>
 
@@ -740,37 +726,62 @@ export default function Home() {
       </section>
 
       <section className="content-zone armory-zone" id="armory">
-        <ZoneIntro number="04" eyebrow="SKILL ARMORY" title="The right loadout for the mission." copy="A full-stack toolkit for taking data products from raw signals to governed, observable production systems." />
+        <ZoneIntro number="04" eyebrow="TECHNICAL CAPABILITIES" title="Tools chosen for production work." copy="A full-stack toolkit for taking data products from raw signals to governed, observable production systems." />
         <div className="loadout-grid">
           {skillGroups.map((group) => (
             <article className="loadout-card gsap-reveal" key={group.label}>
-              <div className="loadout-head"><span>{group.icon}</span><b>LVL {group.level}</b></div>
+              <div className="loadout-head"><span>{group.icon}</span><b>{group.focus}</b></div>
               <h3>{group.label}</h3>
-              <div className="ability-meter"><i style={{ width: `${group.level}%` }} /></div>
-              <div className="ability-list">{group.skills.map((skill, index) => <span key={skill} className={index < 2 ? "equipped" : ""}>{index < 2 ? "◆" : "◇"} {skill}</span>)}</div>
+              <div className="ability-list">{group.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
             </article>
           ))}
         </div>
-        <div className="language-strip gsap-reveal"><span>PRIMARY LANGUAGES</span><b>PYTHON</b><b>SQL</b><b>JAVASCRIPT</b><b>C#</b><b>JAVA</b><strong>BUILD READY // 100%</strong></div>
+        <div className="language-strip gsap-reveal"><span>PRIMARY LANGUAGES</span><b>PYTHON</b><b>SQL</b><b>JAVASCRIPT</b><b>C#</b><b>JAVA</b><strong>PRODUCTION TOOLKIT</strong></div>
       </section>
 
       <section className="content-zone academy-zone" id="academy">
-        <ZoneIntro number="05" eyebrow="ACADEMY & LORE" title="The thinking behind the build." copy="Formal depth in data science and computer science, reinforced by published research and applied industry missions." />
+        <ZoneIntro number="05" eyebrow="EDUCATION & RESEARCH" title="The thinking behind the build." copy="Formal depth in data science and computer science, reinforced by published research and applied industry work." />
         <div className="academy-grid">
           <article className="degree-card degree-primary gsap-reveal">
             <div className="degree-mark">MSU</div>
-            <div><span>LEGENDARY CREDENTIAL</span><small>Michigan State University</small><h3>M.S. Data Science</h3><p>Machine Learning · Natural Language Processing · Foundations of LLMs · Probability & Statistics · Computational Optimization · Data Mining</p></div>
+            <div><span>GRADUATE DEGREE</span><small>Michigan State University</small><h3>M.S. Data Science</h3><p>Machine Learning · Natural Language Processing · Foundations of LLMs · Probability & Statistics · Computational Optimization · Data Mining</p></div>
             <strong>3.92<small>/ 4.0 GPA</small></strong>
           </article>
           <article className="degree-card gsap-reveal">
             <div className="degree-mark">NU</div>
-            <div><span>EPIC CREDENTIAL</span><small>NIIT University</small><h3>B.Tech Computer Science</h3><p>Computer science foundations, software engineering, algorithms, and applied machine learning.</p></div>
+            <div><span>UNDERGRADUATE DEGREE</span><small>NIIT University</small><h3>B.Tech Computer Science</h3><p>Computer science foundations, software engineering, algorithms, and applied machine learning.</p></div>
             <strong>3.6<small>/ 4.0 GPA</small></strong>
           </article>
           <a className="lore-card gsap-reveal" href="https://ieeexplore.ieee.org/document/10372979" target="_blank" rel="noreferrer">
-            <span>DISCOVERED LORE // IEEE</span><h3>Interpretable ECG anomaly detection</h3><p>Peer-reviewed research translating autoencoder representations into clinical anomaly signals.</p><b>READ PUBLICATION ↗</b>
+            <span>PEER-REVIEWED RESEARCH // IEEE</span><h3>Interpretable ECG anomaly detection</h3><p>Peer-reviewed research translating autoencoder representations into clinical anomaly signals.</p><b>READ PUBLICATION ↗</b>
           </a>
-          <article className="profile-card gsap-reveal"><span>PLAYER PROFILE</span><h3>Technical depth.<br />Business clarity.</h3><p>I do my best work where statistical rigor, reliable engineering, and high-stakes decisions overlap.</p><div><b>5</b><small>industry placements</small><b>3</b><small>domains mastered</small></div></article>
+          <article className="profile-card gsap-reveal">
+            <div className="profile-card-head">
+              <span>HOW I WORK</span>
+              <b>APPLIED AI + DATA SYSTEMS</b>
+            </div>
+            <div className="profile-statement">
+              <h3>Technical depth.<br /><em>Business clarity.</em></h3>
+              <p className="profile-intro">I am at my best on teams that treat accuracy, traceability, and usability as one problem. I like turning ambiguous questions into systems people can inspect, challenge, and improve.</p>
+            </div>
+            <div className="profile-details">
+              <section>
+                <span>01</span>
+                <strong>Curious about</strong>
+                <p>Trustworthy agent behavior, interpretable healthcare ML, and evaluation methods that reflect real workflows.</p>
+              </section>
+              <section>
+                <span>02</span>
+                <strong>How I collaborate</strong>
+                <p>Clear assumptions, direct feedback, thoughtful documentation, and small experiments before expensive commitments.</p>
+              </section>
+              <section>
+                <span>03</span>
+                <strong>Growing toward</strong>
+                <p>Technical leadership across applied AI and data platforms, especially where regulation and human judgment matter.</p>
+              </section>
+            </div>
+          </article>
         </div>
       </section>
 

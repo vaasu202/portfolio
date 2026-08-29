@@ -1,0 +1,14 @@
+{
+  "scanMethod": "component-zones",
+  "targetMinDetails": 6,
+  "details": [
+    {"id":"lime-edge-inlay","component":"policy-core","implementation":"nested beveled inlay geometry"},
+    {"id":"octagonal-inspection-ring","component":"gate","implementation":"extruded octagonal frame"},
+    {"id":"four-ring-clamps","component":"gate","implementation":"four mirrored clamp meshes"},
+    {"id":"three-policy-grooves","component":"policy-core","implementation":"three shallow rail meshes"},
+    {"id":"ingress-packet-seam","component":"packet","implementation":"contrasting packet belt"},
+    {"id":"quarantine-stop-marker","component":"quarantine-branch","implementation":"red-orange terminal cap"},
+    {"id":"protected-egress-socket","component":"egress","implementation":"nested lime ceramic socket"},
+    {"id":"status-pin-cluster","component":"gate","implementation":"three small ceramic status pins"}
+  ]
+}
