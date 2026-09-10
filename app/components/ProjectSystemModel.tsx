@@ -356,7 +356,7 @@ function buildEcg(model: THREE.Group, setStatus: (value: string) => void): Model
   };
 }
 
-function buildRuntime(
+export function buildRuntime(
   variant: ProjectSystemVariant,
   model: THREE.Group,
   setStatus: (value: string) => void,

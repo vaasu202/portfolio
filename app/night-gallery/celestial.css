@@ -1,0 +1,391 @@
+/* A single surface system over the full-viewport vGPU black hole. */
+.night-gallery {
+  --ng-bg: #07080b; --ng-text: #f4f1ed; --ng-muted: #b6b4b5; --ng-accent: #dfb797;
+  --ng-panel: #15161bdd; --ng-line: #ffffff20;
+  background: var(--ng-bg); color: var(--ng-text);
+}
+.ng-black-hole { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: #050507 url('/black-hole-poster.png') center / cover no-repeat; }
+.ng-black-hole canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.3s ease; }
+.ng-black-hole canvas[data-ready="true"] { opacity: 1; }
+.ng-black-hole canvas[data-renderer="fallback"] { opacity: 0; }
+.ng-black-hole::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg,#06070a70,transparent 65%),linear-gradient(0deg,#05060944,transparent 30%); }
+.ng-world { background: transparent; }
+.ng-cinematic .ng-world { transition: opacity .45s ease; }
+
+.ng-world::after { display: none; }
+.night-gallery .ng-masthead { background: linear-gradient(#08090bbb,#08090b38 70%,transparent); }
+.night-gallery .ng-brand span { color: #b2afb2; }
+.night-gallery .ng-rail { background: linear-gradient(140deg,#27272cbb,#101116c9); border-color: #ffffff24; box-shadow: 0 20px 55px #0006,inset 0 1px #ffffff12; backdrop-filter: blur(8px); }
+.ng-rail-mark { background: #efebe6; color: #17171b; box-shadow: 0 3px 12px #0004; }
+.ng-rail-mark span { color: #a2785e; }
+.ng-rail-rule { background: #ffffff16; }
+.ng-nav .ng-dock-item { color: #bcb9bb; background: #ffffff03; border-radius: 9px; }
+.ng-nav .ng-dock-item[data-near="true"] { background: #37353ce6; border-color: #ffffff26; color: #fff; }
+.ng-nav .ng-dock-item[aria-current] { background: #ede7df; color: #262229; border-color: #fff8; box-shadow: 0 5px 17px #0003,inset 0 1px #fff; }
+.night-gallery .ng-italic { color: var(--ng-accent); font-weight: 550; }
+.night-gallery :focus-visible { outline-color: #edc4a2; }
+.ng-hero-intro,.ng-section-head > p,.ng-about-copy > p,.ng-contact-copy > p { color: #c6c2c1; }
+.ng-cinematic .ng-hero-copy::before,.ng-cinematic .ng-about-copy::before,.ng-cinematic .ng-contact-copy::before { background: radial-gradient(ellipse at 35% 50%,#08090cdb 12%,#08090c80 48%,transparent 73%); }
+.night-gallery .ng-introduction,.night-gallery .ng-career,.night-gallery .ng-toolkit { background: transparent; }
+.night-gallery .ng-introduction { padding-block: 100px; }
+.night-gallery .ng-intro-bottom { background: #101115d9; border: 1px solid var(--ng-line); border-radius: 18px; padding: 32px; backdrop-filter: none; }
+.ng-proof b { color: #f0e8df; }
+.ng-proof span,.ng-intro-bottom > p { color: #c0bcc0; }
+.night-gallery .ng-career { --cream: #121318; --ink-soft: #c6c0c0; --line-dark: #ffffff1f; --signal: #e2b18d; --lime-soft: #d6b99e; }
+.ng-career .mission-stack { gap: 18px; }
+.ng-career .mission-card { padding: 30px 24px; border: 1px solid #ffffff1e; border-radius: 18px; background: linear-gradient(120deg,#1d1d23eb,#111217e0); box-shadow: 0 16px 50px #0003,inset 0 1px #ffffff06; backdrop-filter: none; transition: border-color .25s,background .25s; }
+.ng-career .mission-card.current { border-color: #dcb18b45; background: linear-gradient(115deg,#30271feb,#14141ae8 58%); }
+.ng-career .mission-card:hover { background: linear-gradient(120deg,#27242aec,#17181dee); border-color: #dfb79766; }
+.ng-career .mission-card:hover .mission-main h3 { color: #fff6eb; }
+.ng-career .mission-meta { color: #a9a3a6; }
+.ng-career .mission-meta b { color: #e0b99a; background: #cf9e7420; border-color: #dfb79735; }
+.ng-career .mission-main .company-name { color: #dcb797; }
+.ng-career .mission-main li::before { color: #d5ac8d; }
+.ng-career .mission-reward { border-color: #ffffff1c; }
+.ng-career .mission-reward strong { color: #f3e7dc; }
+.ng-career .mission-reward span { background: #ffffff08; color: #c7bec0; border-color: #ffffff18; }
+.night-gallery .ng-work-nav { padding: 7px; gap: 5px; border: 1px solid #ffffff26; border-radius: 16px; background: #14151bdc; backdrop-filter: none; box-shadow: 0 12px 40px #0007,inset 0 1px #ffffff09; }
+.night-gallery .ng-work-nav a { position: relative; border: 1px solid transparent; border-radius: 10px; padding: 15px 16px; color: #b9b6bf; text-align: left; justify-content: space-between; transition: background .2s,border-color .2s,color .2s; }
+.ng-work-nav .ng-tab-label { display: flex; flex-direction: column; gap: 5px; }
+.ng-tab-label strong { font-weight: 550; font-size: 14px; letter-spacing: -.015em; }
+.ng-tab-label small { color: #96919c; font-size: 11px; line-height: 1.4; }
+.ng-work-nav .ng-tab-arrow { font-size: 18px; color: #a99c95; transition: transform .2s; }
+.night-gallery .ng-work-nav a:hover { color: #fff; background: #ffffff09; border-color: #ffffff16; }
+.night-gallery .ng-work-nav a:hover .ng-tab-arrow { transform: translate(2px,-2px); }
+.night-gallery[data-active-exhibit] .ng-work-nav a[aria-current="location"] { background: linear-gradient(130deg,#51413670,#2a272e); color: #fff1e6; border-color: #e9ba8f55; box-shadow: inset 0 1px #fff1,0 3px 10px #0002; }
+.night-gallery .ng-work-nav a[aria-current] small { color: #d1b79f; }
+.night-gallery .ng-project-copy { border: 1px solid #ffffff25; border-radius: 22px; padding: 34px; background: linear-gradient(140deg,#222127eb,#111218eb 70%); box-shadow: 0 30px 75px #0005,inset 0 1px #ffffff09; backdrop-filter: none; }
+.ng-cinematic .ng-project-copy::before { display: none; }
+.night-gallery .ng-project-label[id] { scroll-margin-top: 195px; }
+.night-gallery .ng-project h3 { font-weight: 500; font-size: clamp(29px,2.6vw,40px); line-height: 1.12; }
+.ng-project-topline > span:last-child { color: #b5a8a2; border: 1px solid #d5b18f24; padding: 4px 9px; border-radius: 5px; background: #d5b18f09; }
+.ng-project-topline .ng-project-index { color: #e4ba97; }
+.night-gallery .ng-project-copy > p { color: #bdb8be; font-size: 16px; line-height: 1.75; }
+.ng-project-copy .ng-outcome { border-color: #dbb08d; padding: 15px 18px; background: linear-gradient(90deg,#d5a2720d,transparent); border-radius: 0 8px 8px 0; }
+.ng-outcome > span { color: #b7a496; font-size: 10px; }
+.ng-outcome p { color: #eee5dd; font-size: 21px; line-height: 1.4; }
+.ng-project-stats { border-color: #ffffff15; gap: 18px; }
+.ng-project-stats strong { color: #f2e7de; font-size: 34px; font-weight: 500; }
+.ng-project-stats small { color: #b2aab0; font-size: 12px; }
+.ng-project-stats b { color: #d0c5c4; font-size: 13px; }
+.ng-tech li { border-color: #ffffff20; color: #d2cbd1; background: #ffffff05; border-radius: 6px; font-size: 14px; padding: 7px 10px; box-shadow: inset 0 1px #ffffff03; }
+.night-gallery .ng-metal { border-color: #ffffff30; background: #141419; box-shadow: 0 4px 12px #0005,inset 0 1px #ffffff0d; }
+.night-gallery .ng-metal:hover:not(:disabled) { background: #252229; box-shadow: 0 8px 25px #0005,inset 0 1px #ffffff14; }
+.night-gallery .ng-preview-card.ng-metal { border-radius: 12px; padding: 12px; min-height: 85px; background: #ffffff04; border-color: #ffffff25; gap: 15px; }
+.ng-preview-card .ng-metal-label > img { border-radius: 6px; width: 90px; height: 58px; filter: saturate(.75); border: 1px solid #ffffff18; }
+.ng-preview-card .ng-metal-label small { color: #afa5ae; font-size: 12px; }
+.night-gallery .ng-preview-card:hover { background: #ffffff0a; border-color: #dfb79766; }
+.ng-project-links { color: #9f979f; }
+.ng-project-links .ng-metal { padding: 8px 13px; }
+.night-gallery .ng-model-tools { background: #14151be8; border: 1px solid #ffffff28; border-radius: 14px; box-shadow: 0 12px 35px #0005,inset 0 1px #ffffff08; backdrop-filter: none; }
+.ng-model-caption,.ng-touch-control { color: #d3c5c1; }
+.ng-model-status,.ng-drag-hint { color: #b1a7ad; }
+.night-gallery .ng-controls-toggle { color: #c6b8b4; }
+.ng-cinematic .ng-simulation-note { background: #111218bd; color: #bab1b9; border-radius: 5px; }
+.ng-skills > div,.ng-skills > div:nth-child(3n + 2) { border: 1px solid #ffffff20; border-radius: 16px; background: linear-gradient(135deg,#222127e8,#111218e8); box-shadow: inset 0 1px #ffffff08; backdrop-filter: none; }
+.ng-skills h3 { color: #ede4de; }
+.ng-skills p { color: #c4a38b; font-size: 12px; }
+.ng-skills li { color: #c5bdc7; }
+.ng-education > div,.ng-social a { border-color: #ffffff25; }
+.ng-education span,.ng-education p,.ng-social a { color: #c2b5bb; }
+.night-gallery .ng-footer { background: #0b0c1080; border-color: #ffffff1d; border-radius: 16px 16px 0 0; padding: 30px; backdrop-filter: none; }
+.ng-footer > div > a:first-child { color: #eee3db; }
+.ng-preview-dialog { background: #121319; color: #eee7e3; border: 1px solid #d4b09055; border-radius: 20px; box-shadow: 0 40px 120px #000c; }
+.ng-preview-dialog::backdrop { background: #050608c9; backdrop-filter: blur(14px); }
+.ng-preview-header { background: #121319f5; border-bottom: 1px solid #ffffff15; padding: 18px 0; }
+.ng-preview-inner > img { border-radius: 10px; border: 1px solid #ffffff15; }
+.ng-preview-inner > p { color: #bbb0bc; }
+@media(max-width:1059px) {
+  .night-gallery .ng-masthead { background: #0a0b10db; backdrop-filter: none; }
+  .night-gallery .ng-rail { background: #17171dd9; }
+  .night-gallery .ng-introduction { padding-block: 65px; }
+  .ng-hero-copy { text-shadow: 0 2px 20px #000; }
+}
+@media(max-width:760px) {
+  .night-gallery .ng-project-label[id] { scroll-margin-top: 155px; }
+  .night-gallery .ng-work-nav { padding: 5px; gap: 3px; border-radius: 12px; }
+  .night-gallery .ng-work-nav a { padding: 12px 5px; justify-content: center; text-align: center; border-radius: 7px; }
+  .ng-tab-label strong { font-size: 11px; }
+  .ng-tab-label small,.ng-work-nav .ng-tab-arrow { display: none; }
+  .night-gallery .ng-project-copy { padding: 24px; border-radius: 17px; }
+  .ng-project-stats { gap: 12px; }
+  .ng-project-stats strong { font-size: 29px; }
+  .ng-tech li { font-size: 14px; }
+  .ng-career .mission-card { padding: 24px 18px; border-radius: 15px; }
+  .night-gallery .ng-intro-bottom { padding: 24px; }
+  .ng-preview-card img { width: 73px; height: 53px; }
+}
+@media(prefers-reduced-motion:reduce) { .ng-black-hole canvas,.ng-work-nav .ng-tab-arrow { transition: none; } }
+@media(prefers-reduced-transparency:reduce) { .night-gallery .ng-rail,.night-gallery .ng-work-nav,.night-gallery .ng-project-copy,.ng-career .mission-card,.ng-skills > div { background: #15161c; backdrop-filter: none; } }
+
+/* Typography and surface hierarchy: display, editorial, reading and data each
+   have one job. The page stays within a single graphite and copper language. */
+.night-gallery {
+  --ng-bg: #08090c;
+  --ng-text: #f3f0eb;
+  --ng-muted: #bcb8b7;
+  --ng-accent: #dfa77f;
+  --ng-panel: #15161bdd;
+  --ng-editorial: var(--ng-display);
+  font-family: var(--ng-body), sans-serif;
+  font-weight: 410;
+  font-feature-settings: "ss01" 1;
+}
+.night-gallery h1,
+.night-gallery h2 {
+  font-family: var(--ng-display), sans-serif;
+  font-weight: 300;
+  letter-spacing: -.045em;
+  line-height: .94;
+  text-wrap: balance;
+}
+.night-gallery h1 {
+  font-size: clamp(64px, 6.35vw, 108px);
+}
+.night-gallery h2 { font-size: clamp(48px, 5vw, 78px); }
+.night-gallery .ng-italic {
+  color: var(--ng-accent);
+  font-weight: 700;
+  letter-spacing: -.055em;
+  font-style: normal;
+}
+.ng-type-line { display: block; white-space: nowrap; }
+.ng-type-char { display: inline-block; will-change: transform, opacity; }
+.night-gallery[data-motion="running"][data-intro="waiting"] .ng-type-char,
+.night-gallery[data-motion="running"][data-intro="waiting"] .ng-type-caret { opacity: 0; }
+.ng-type-caret {
+  display: inline-block;
+  width: .075em;
+  height: .76em;
+  margin-left: .12em;
+  vertical-align: -.02em;
+  background: currentColor;
+  box-shadow: 0 0 22px rgb(223 167 127 / .55);
+  transform-origin: 50% 50%;
+}
+.ng-project h3,
+.ng-career .mission-main h3,
+.ng-toolkit-heading,
+.ng-skills h3,
+.ng-education h3,
+.night-gallery .ng-preview-header h2 {
+  font-family: var(--ng-editorial), sans-serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
+}
+.night-gallery .ng-project h3,
+.night-gallery.ng-cinematic .ng-project h3 { font-size: clamp(38px, 3.2vw, 52px); font-weight: 400; line-height: .98; }
+.ng-career .mission-main h3 { font-size: clamp(31px, 2.75vw, 43px); line-height: 1; }
+.ng-toolkit-heading { font-size: clamp(50px, 4.8vw, 74px); line-height: .96; }
+.ng-skills h3 { font-size: 30px; line-height: 1; }
+.ng-brand,
+.ng-rail-mark,
+.ng-footer > div > a:first-child {
+  font-family: var(--ng-editorial), sans-serif;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+.ng-tab-label strong {
+  font-family: var(--ng-body), sans-serif;
+  font-weight: 620;
+  letter-spacing: -.015em;
+}
+.ng-eyebrow,
+.ng-project-index,
+.ng-project-topline > span:last-child,
+.ng-project-stats,
+.ng-tech,
+.ng-career .mission-index,
+.ng-career .mission-meta,
+.ng-career .mission-reward,
+.ng-skills p,
+.ng-model-caption,
+.ng-model-status {
+  font-family: var(--ng-data), sans-serif;
+}
+.ng-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .16em; }
+.ng-hero-intro { max-width: 500px; font-size: 19px; line-height: 1.58; letter-spacing: -.012em; }
+.ng-project-copy > p,
+.ng-about-copy > p:not(.ng-eyebrow) { line-height: 1.72; letter-spacing: -.006em; }
+.ng-project-stats strong { font-family: var(--ng-display), sans-serif; font-weight: 700; letter-spacing: -.035em; }
+.ng-tech li,
+.ng-skills li { font-family: var(--ng-data), monospace; font-weight: 400; letter-spacing: -.025em; }
+
+.night-gallery .ng-rail,
+.night-gallery .ng-work-nav,
+.night-gallery .ng-project-copy,
+.ng-career .mission-card,
+.ng-skills > div {
+  border-color: #ffffff24;
+  background: linear-gradient(145deg, rgb(34 34 40 / .92), rgb(13 14 18 / .9));
+  box-shadow: inset 0 1px rgb(255 255 255 / .08), 0 28px 70px rgb(0 0 0 / .26);
+}
+.night-gallery .ng-project-copy { border-radius: 18px; }
+.ng-career .mission-card,
+.ng-skills > div { border-radius: 16px; }
+.night-gallery .ng-work-nav { border-radius: 14px; }
+.ng-nav .ng-dock-item { font-family: var(--ng-body), sans-serif; font-weight: 520; letter-spacing: -.01em; }
+.night-gallery .ng-work-nav a[aria-current],
+.night-gallery[data-active-exhibit] .ng-work-nav a[aria-current="location"] {
+  background: linear-gradient(135deg, rgb(93 64 49 / .72), rgb(39 35 39 / .96));
+  border-color: rgb(223 167 127 / .42);
+}
+.ng-project-copy .ng-outcome { background: linear-gradient(90deg, rgb(223 167 127 / .11), transparent); }
+.ng-outcome p {
+  font-family: var(--ng-editorial), sans-serif;
+  font-weight: 530;
+  font-variation-settings: "wght" 530, "wdth" 3.5, "CNTR" 3, "slnt" 0;
+  text-transform: uppercase;
+}
+.ng-skills {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 18px;
+}
+.ng-skills > div:nth-child(odd) { grid-column: span 5; }
+.ng-skills > div:nth-child(even) { grid-column: span 7; }
+.ng-skills > div:nth-child(4n + 2) { background: linear-gradient(145deg, rgb(54 42 36 / .9), rgb(17 17 22 / .94)); }
+.ng-skills > div:nth-child(4n + 3) { background: linear-gradient(145deg, rgb(29 31 38 / .94), rgb(13 14 18 / .92)); }
+.ng-exhibit-mouse .ng-model-surface { cursor: default; }
+
+/* The exhibit plaque prioritizes what the model represents and what just
+   happened. Controls stay secondary and retain generous click targets. */
+.night-gallery .ng-model-tools {
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgb(29 30 36 / .96), rgb(14 15 19 / .94));
+  border-color: rgb(255 255 255 / .2);
+  box-shadow: inset 0 1px rgb(255 255 255 / .09), 0 20px 55px rgb(0 0 0 / .4);
+}
+.ng-cinematic .ng-model-tools {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 20px;
+  width: min(470px, 38%);
+  bottom: 24px;
+  padding: 18px 20px;
+}
+.ng-cinematic .ng-model-caption { display: contents; }
+.ng-cinematic .ng-model-caption > span {
+  grid-area: 1 / 1;
+  align-self: center;
+  color: #f4eee9;
+  font-family: var(--ng-editorial), sans-serif;
+  font-size: 16px;
+  font-weight: 610;
+  letter-spacing: .025em;
+  font-variation-settings: "wght" 610, "wdth" 4, "CNTR" 3, "slnt" 0;
+  text-transform: uppercase;
+}
+.ng-cinematic .ng-model-primary { grid-area: 1 / 2; justify-self: end; }
+.ng-cinematic .ng-model-status {
+  grid-area: 2 / 1;
+  min-height: 24px;
+  margin: 0;
+  align-self: center;
+  color: #d3c8c5;
+  font-family: var(--ng-body), sans-serif;
+  font-size: 15px;
+  font-weight: 450;
+  line-height: 1.45;
+  animation: ng-status-arrive 260ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+/* The mono layer is deliberately sparse: it labels the machinery without
+   turning the entire portfolio into a terminal. */
+.ng-project-index,
+.ng-project-topline > span:last-child,
+.ng-career .mission-index,
+.ng-career .mission-meta,
+.ng-skills p,
+.ng-model-caption,
+.ng-project-stats small,
+.ng-project-stats b {
+  text-transform: uppercase;
+}
+.ng-project-topline > span:last-child,
+.ng-career .mission-meta,
+.ng-skills p,
+.ng-model-caption,
+.ng-project-stats small,
+.ng-project-stats b { letter-spacing: .055em; }
+.ng-tech li,
+.ng-skills li { font-size: 15px; }
+
+.ng-hero-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 20px;
+  color: #d9c4b6;
+  font: 500 12px/1.4 var(--ng-data), monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ng-hero-context span + span::before { content: "✦"; margin-right: 20px; color: var(--ng-accent); }
+.night-gallery .ng-intro-bottom {
+  grid-template-columns: minmax(260px, .85fr) minmax(0, 2.15fr);
+  gap: clamp(30px, 4vw, 70px);
+}
+.ng-proof { width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.8vw, 28px); }
+.ng-proof > span { min-width: 0; max-width: none; }
+.ng-proof b { font-family: var(--ng-display), sans-serif; font-weight: 700; font-size: clamp(38px, 3.55vw, 58px); line-height: 1.05; letter-spacing: -.035em; white-space: nowrap; }
+.ng-language-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  margin-top: 22px;
+  padding: 20px 24px;
+  border: 1px solid #ffffff24;
+  border-radius: 14px;
+  background: linear-gradient(100deg, rgb(15 16 21 / .94), rgb(55 39 32 / .78));
+  box-shadow: inset 0 1px rgb(255 255 255 / .07);
+  font: 500 12px/1.4 var(--ng-data), monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ng-language-strip > span { color: var(--ng-accent); }
+.ng-language-strip > div { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.ng-language-strip b { color: #f1ece7; font-weight: 500; }
+.ng-language-strip strong { color: #a9a3aa; font-weight: 400; }
+.ng-focus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 28px;
+}
+.ng-focus-grid article {
+  padding: 17px 18px;
+  border: 1px solid #ffffff1f;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgb(34 34 40 / .84), rgb(14 15 19 / .84));
+}
+.ng-focus-grid span {
+  color: var(--ng-accent);
+  font: 500 11px/1.4 var(--ng-data), monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ng-focus-grid p { margin-top: 9px; color: #c7c1c1; font-size: 14px; line-height: 1.55; }
+.ng-education p b { color: #ece4de; font-weight: 560; }
+.ng-cinematic .ng-controls-toggle { grid-area: 2 / 2; justify-self: end; }
+.ng-cinematic .ng-model-buttons { grid-column: 1 / -1; grid-row: 3; padding-top: 8px; border-top: 1px solid rgb(255 255 255 / .1); }
+.ng-cinematic .ng-model-action,
+.ng-cinematic .ng-controls-toggle { min-height: 42px; padding: 10px 15px; font-size: 13px; white-space: nowrap; }
+@keyframes ng-status-arrive {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .night-gallery h1 { font-size: clamp(39px, 9vw, 58px); }
+  .night-gallery h2 { font-size: clamp(34px, 7.7vw, 50px); }
+  .ng-skills { grid-template-columns: 1fr; }
+  .ng-skills > div:nth-child(n) { grid-column: 1; }
+  .ng-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ng-language-strip { grid-template-columns: 1fr; gap: 12px; }
+  .ng-focus-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-cinematic .ng-model-status { animation: none; }
+  .ng-type-char { filter: none !important; opacity: 1 !important; transform: none !important; }
+  .ng-type-caret { display: none; }
+}

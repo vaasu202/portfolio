@@ -42,4 +42,5 @@ next-env.d.ts
 /outputs/
 /work/
 /tmp/
+/.tmp/
 /Portfolio.zip

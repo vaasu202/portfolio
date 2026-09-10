@@ -12,7 +12,9 @@
     "dev:sites": "vinext dev",
     "build:sites": "vinext build",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "test:gallery": "node --test tests/rendered-html.test.mjs tests/night-gallery.test.mjs tests/star-travel.test.mjs",
+    "test:gpu": "node --test tests/black-hole.test.mjs",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern .tmp",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
@@ -22,7 +24,8 @@
     "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "vgpu": "^0.4.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
