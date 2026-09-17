@@ -264,7 +264,7 @@ export default function NightGallery() {
     </section>
 
     <section className="ng-toolkit ng-wrap" aria-label="Technology stack">
-      <div className="ng-capabilities"><h3 className="ng-toolkit-heading">Tools of the trade.</h3><div className="ng-skills">{skillGroups.map(group => <div key={group.label}><h3>{group.label}</h3><p>{group.focus}</p><ul>{group.skills.map(skill => <li key={skill}>{skill}</li>)}</ul></div>)}</div><div className="ng-language-strip"><span>Primary languages</span><div><b>Python</b><b>SQL</b><b>JavaScript</b><b>C#</b><b>Java</b></div><strong>Production toolkit</strong></div></div>
+      <div className="ng-capabilities"><h3 className="ng-toolkit-heading">Tools of the trade.</h3><div className="ng-skills">{skillGroups.map(group => <div className="ng-skill-card" tabIndex={0} key={group.label}><h3>{group.label}</h3><p>{group.focus}</p><ul>{group.skills.map(skill => <li key={skill}>{skill}</li>)}</ul></div>)}</div><div className="ng-language-strip"><span>Primary languages</span><div><b>Python</b><b>SQL</b><b>JavaScript</b><b>C#</b><b>Java</b></div><strong>Production toolkit</strong></div></div>
     </section>
 
     <section className="ng-about ng-wrap" id="about" data-ng-chapter>

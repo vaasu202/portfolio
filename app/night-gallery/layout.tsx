@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
-const glametrix = localFont({
-  src: [
-    { path: "../../public/fonts/glametrix-light.otf", weight: "300", style: "normal" },
-    { path: "../../public/fonts/glametrix-regular.otf", weight: "400", style: "normal" },
-    { path: "../../public/fonts/glametrix-bold.otf", weight: "700", style: "normal" },
-  ],
+const migha = localFont({
+  src: "../../public/fonts/migha-variable.ttf",
   variable: "--ng-display",
+  weight: "100 900",
   display: "swap",
 });
 const onest = localFont({ src: "../../public/fonts/onest-variable.ttf", variable: "--ng-body", weight: "100 900", display: "swap" });
-const plexMono = localFont({
-  src: [
-    { path: "../../public/fonts/ibm-plex-mono-regular.ttf", weight: "400", style: "normal" },
-    { path: "../../public/fonts/ibm-plex-mono-medium.ttf", weight: "500", style: "normal" },
-    { path: "../../public/fonts/ibm-plex-mono-semibold.ttf", weight: "600", style: "normal" },
-  ],
-  variable: "--ng-data",
+const syne = localFont({
+  src: "../../public/fonts/syne-variable.ttf",
+  variable: "--ng-geometry",
+  weight: "400 800",
   display: "swap",
 });
 
@@ -27,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function GalleryLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`${glametrix.variable} ${onest.variable} ${plexMono.variable}`}>{children}</div>;
+  return <div className={`${migha.variable} ${syne.variable} ${onest.variable}`}>{children}</div>;
 }

@@ -118,15 +118,16 @@
 @media(prefers-reduced-motion:reduce) { .ng-black-hole canvas,.ng-work-nav .ng-tab-arrow { transition: none; } }
 @media(prefers-reduced-transparency:reduce) { .night-gallery .ng-rail,.night-gallery .ng-work-nav,.night-gallery .ng-project-copy,.ng-career .mission-card,.ng-skills > div { background: #15161c; backdrop-filter: none; } }
 
-/* Typography and surface hierarchy: display, editorial, reading and data each
-   have one job. The page stays within a single graphite and copper language. */
+/* Mirage typography: Migha sets the atmosphere, Syne supplies the engineered
+   countervoice, and Onest keeps reading and interface text calm. */
 .night-gallery {
   --ng-bg: #08090c;
   --ng-text: #f3f0eb;
   --ng-muted: #bcb8b7;
   --ng-accent: #dfa77f;
   --ng-panel: #15161bdd;
-  --ng-editorial: var(--ng-display);
+  --ng-editorial: var(--ng-geometry);
+  --ng-data: var(--ng-body);
   font-family: var(--ng-body), sans-serif;
   font-weight: 410;
   font-feature-settings: "ss01" 1;
@@ -134,19 +135,21 @@
 .night-gallery h1,
 .night-gallery h2 {
   font-family: var(--ng-display), sans-serif;
-  font-weight: 300;
-  letter-spacing: -.045em;
-  line-height: .94;
+  font-weight: 430;
+  letter-spacing: -.025em;
+  line-height: .91;
   text-wrap: balance;
 }
 .night-gallery h1 {
-  font-size: clamp(64px, 6.35vw, 108px);
+  font-size: clamp(62px, 5.6vw, 96px);
 }
-.night-gallery h2 { font-size: clamp(48px, 5vw, 78px); }
+.night-gallery h2 { font-size: clamp(48px, 4.8vw, 82px); }
 .night-gallery .ng-italic {
   color: var(--ng-accent);
-  font-weight: 700;
-  letter-spacing: -.055em;
+  font-family: var(--ng-geometry), sans-serif;
+  font-weight: 720;
+  letter-spacing: -.04em;
+  line-height: .94;
   font-style: normal;
 }
 .ng-type-line { display: block; white-space: nowrap; }
@@ -170,20 +173,20 @@
 .ng-education h3,
 .night-gallery .ng-preview-header h2 {
   font-family: var(--ng-editorial), sans-serif;
-  font-weight: 400;
-  letter-spacing: -.035em;
+  font-weight: 620;
+  letter-spacing: -.03em;
 }
 .night-gallery .ng-project h3,
-.night-gallery.ng-cinematic .ng-project h3 { font-size: clamp(38px, 3.2vw, 52px); font-weight: 400; line-height: .98; }
-.ng-career .mission-main h3 { font-size: clamp(31px, 2.75vw, 43px); line-height: 1; }
-.ng-toolkit-heading { font-size: clamp(50px, 4.8vw, 74px); line-height: .96; }
-.ng-skills h3 { font-size: 30px; line-height: 1; }
+.night-gallery.ng-cinematic .ng-project h3 { font-size: clamp(36px, 3vw, 49px); font-weight: 650; line-height: 1.02; }
+.ng-career .mission-main h3 { font-size: clamp(30px, 2.55vw, 40px); line-height: 1.03; }
+.ng-toolkit-heading { font-size: clamp(48px, 4.5vw, 70px); line-height: .98; }
+.ng-skills h3 { font-size: 28px; line-height: 1.04; }
 .ng-brand,
 .ng-rail-mark,
 .ng-footer > div > a:first-child {
   font-family: var(--ng-editorial), sans-serif;
-  font-weight: 700;
-  letter-spacing: -.025em;
+  font-weight: 680;
+  letter-spacing: -.02em;
 }
 .ng-tab-label strong {
   font-family: var(--ng-body), sans-serif;
@@ -207,9 +210,9 @@
 .ng-hero-intro { max-width: 500px; font-size: 19px; line-height: 1.58; letter-spacing: -.012em; }
 .ng-project-copy > p,
 .ng-about-copy > p:not(.ng-eyebrow) { line-height: 1.72; letter-spacing: -.006em; }
-.ng-project-stats strong { font-family: var(--ng-display), sans-serif; font-weight: 700; letter-spacing: -.035em; }
+.ng-project-stats strong { font-family: var(--ng-editorial), sans-serif; font-weight: 680; letter-spacing: -.03em; }
 .ng-tech li,
-.ng-skills li { font-family: var(--ng-data), monospace; font-weight: 400; letter-spacing: -.025em; }
+.ng-skills li { font-family: var(--ng-data), sans-serif; font-weight: 470; letter-spacing: -.015em; }
 
 .night-gallery .ng-rail,
 .night-gallery .ng-work-nav,
@@ -233,8 +236,8 @@
 .ng-project-copy .ng-outcome { background: linear-gradient(90deg, rgb(223 167 127 / .11), transparent); }
 .ng-outcome p {
   font-family: var(--ng-editorial), sans-serif;
-  font-weight: 530;
-  font-variation-settings: "wght" 530, "wdth" 3.5, "CNTR" 3, "slnt" 0;
+  font-weight: 610;
+  letter-spacing: -.025em;
   text-transform: uppercase;
 }
 .ng-skills {
@@ -245,6 +248,73 @@
 .ng-skills > div:nth-child(even) { grid-column: span 7; }
 .ng-skills > div:nth-child(4n + 2) { background: linear-gradient(145deg, rgb(54 42 36 / .9), rgb(17 17 22 / .94)); }
 .ng-skills > div:nth-child(4n + 3) { background: linear-gradient(145deg, rgb(29 31 38 / .94), rgb(13 14 18 / .92)); }
+
+/* Capability cards behave like instruments waking under inspection: the
+   surface rises, a narrow light crosses it, and its tools answer in sequence. */
+.ng-skill-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  translate: 0 0;
+  transition:
+    translate 260ms cubic-bezier(.16, 1, .3, 1),
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+.ng-skill-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -42%;
+  width: 34%;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent, rgb(223 167 127 / .13), transparent);
+  transform: skewX(-12deg);
+  translate: 0 0;
+  transition: translate 420ms cubic-bezier(.16, 1, .3, 1), opacity 140ms ease;
+}
+.ng-skill-card h3,
+.ng-skill-card p,
+.ng-skill-card li {
+  translate: 0 0;
+  transition: translate 190ms ease, color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+.ng-skill-card:focus-visible { outline-offset: -5px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .ng-skill-card:hover,
+  .ng-skill-card:focus-visible {
+    translate: 0 -7px;
+    border-color: rgb(223 167 127 / .58);
+  }
+  .ng-skill-card:hover::after,
+  .ng-skill-card:focus-visible::after {
+    opacity: 1;
+    translate: 430% 0;
+  }
+  .ng-skill-card:hover h3,
+  .ng-skill-card:focus-visible h3 {
+    color: #fff7f0;
+    translate: 5px 0;
+  }
+  .ng-skill-card:hover p,
+  .ng-skill-card:focus-visible p { color: #e1ad86; }
+  .ng-skill-card:hover li,
+  .ng-skill-card:focus-visible li {
+    translate: 0 -3px;
+    color: #fff4eb;
+    border-color: rgb(223 167 127 / .42);
+    background-color: rgb(223 167 127 / .1);
+  }
+  .ng-skill-card li:nth-child(2) { transition-delay: 18ms; }
+  .ng-skill-card li:nth-child(3) { transition-delay: 36ms; }
+  .ng-skill-card li:nth-child(4) { transition-delay: 54ms; }
+  .ng-skill-card li:nth-child(5) { transition-delay: 72ms; }
+  .ng-skill-card li:nth-child(6) { transition-delay: 90ms; }
+  .ng-skill-card li:nth-child(n + 7) { transition-delay: 108ms; }
+}
 .ng-exhibit-mouse .ng-model-surface { cursor: default; }
 
 /* The exhibit plaque prioritizes what the model represents and what just
@@ -269,9 +339,8 @@
   color: #f4eee9;
   font-family: var(--ng-editorial), sans-serif;
   font-size: 16px;
-  font-weight: 610;
-  letter-spacing: .025em;
-  font-variation-settings: "wght" 610, "wdth" 4, "CNTR" 3, "slnt" 0;
+  font-weight: 650;
+  letter-spacing: .02em;
   text-transform: uppercase;
 }
 .ng-cinematic .ng-model-primary { grid-area: 1 / 2; justify-self: end; }
@@ -315,7 +384,7 @@
   gap: 8px 20px;
   margin-top: 20px;
   color: #d9c4b6;
-  font: 500 12px/1.4 var(--ng-data), monospace;
+  font: 600 12px/1.4 var(--ng-data), sans-serif;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -326,7 +395,7 @@
 }
 .ng-proof { width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.8vw, 28px); }
 .ng-proof > span { min-width: 0; max-width: none; }
-.ng-proof b { font-family: var(--ng-display), sans-serif; font-weight: 700; font-size: clamp(38px, 3.55vw, 58px); line-height: 1.05; letter-spacing: -.035em; white-space: nowrap; }
+.ng-proof b { font-family: var(--ng-editorial), sans-serif; font-weight: 680; font-size: clamp(38px, 3.55vw, 58px); line-height: 1.05; letter-spacing: -.03em; white-space: nowrap; }
 .ng-language-strip {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -338,7 +407,7 @@
   border-radius: 14px;
   background: linear-gradient(100deg, rgb(15 16 21 / .94), rgb(55 39 32 / .78));
   box-shadow: inset 0 1px rgb(255 255 255 / .07);
-  font: 500 12px/1.4 var(--ng-data), monospace;
+  font: 600 12px/1.4 var(--ng-data), sans-serif;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -360,7 +429,7 @@
 }
 .ng-focus-grid span {
   color: var(--ng-accent);
-  font: 500 11px/1.4 var(--ng-data), monospace;
+  font: 600 11px/1.4 var(--ng-data), sans-serif;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -388,4 +457,10 @@
   .ng-cinematic .ng-model-status { animation: none; }
   .ng-type-char { filter: none !important; opacity: 1 !important; transform: none !important; }
   .ng-type-caret { display: none; }
+  .ng-skill-card,
+  .ng-skill-card::after,
+  .ng-skill-card h3,
+  .ng-skill-card p,
+  .ng-skill-card li { transition: none; translate: 0 0; }
+  .ng-skill-card::after { display: none; }
 }
